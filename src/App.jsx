@@ -7,12 +7,12 @@ const PHASES_NISHANT = [
   {
     id: 1, name: "Build the Foundation", weeks: "1–4", subtitle: "Create the daily habit",
     weeklyPlan: [
-      { day: "Monday", type: "walk", title: "Morning Walk", duration: "25 min", detail: "Easy pace, focus on breathing. No rush." },
+      { day: "Monday", type: "walk", title: "Morning Walk", duration: "25 min", detail: "Easy pace, focus on breathing. No rush. Treadmill: 4.5–5 km/h, 1% incline." },
       { day: "Tuesday", type: "strength", title: "Bodyweight Basics", duration: "15 min", detail: "Wall pushups ×10, Chair squats ×10, Plank 20s — 3 rounds" },
-      { day: "Wednesday", type: "walk", title: "Walk + Stretch", duration: "30 min", detail: "20 min walk + 10 min full body stretch" },
+      { day: "Wednesday", type: "walk", title: "Walk + Stretch", duration: "30 min", detail: "20 min walk + 10 min full body stretch. Treadmill: 5 km/h, 1% incline." },
       { day: "Thursday", type: "rest", title: "Active Rest", duration: "15 min", detail: "Gentle mobility work. Hip circles, shoulder rolls, neck stretches." },
       { day: "Friday", type: "strength", title: "Bodyweight Basics", duration: "15 min", detail: "Wall pushups ×12, Chair squats ×12, Plank 25s — 3 rounds" },
-      { day: "Saturday", type: "walk", title: "Long Walk", duration: "40 min", detail: "Explore a new route. Listen to a podcast. Enjoy it." },
+      { day: "Saturday", type: "walk", title: "Long Walk", duration: "40 min", detail: "Explore a new route. Listen to a podcast. Enjoy it. Treadmill: 4.5–5 km/h, 2% incline." },
       { day: "Sunday", type: "rest", title: "Full Rest", duration: "—", detail: "Rest completely. Do some light stretching if you feel like it." },
     ],
     nutrition: ["Eat 3 meals a day — no snacking between", "Fill half your plate with vegetables", "Cut all sugary drinks — water, black coffee, tea only", "Drink 2.5L of water daily", "No food after 8pm"],
@@ -20,11 +20,11 @@ const PHASES_NISHANT = [
   {
     id: 2, name: "Build Strength", weeks: "5–8", subtitle: "Add resistance, push further",
     weeklyPlan: [
-      { day: "Monday", type: "walk", title: "Brisk Walk", duration: "35 min", detail: "Push the pace. Slightly breathless but can still talk." },
+      { day: "Monday", type: "walk", title: "Brisk Walk", duration: "35 min", detail: "Push the pace. Slightly breathless but can still talk. Treadmill: 5.5–6 km/h, 2% incline." },
       { day: "Tuesday", type: "strength", title: "Upper Body Circuit", duration: "25 min", detail: "Pushups ×12, Dips ×10, Pike pushups ×8, Plank 40s — 4 rounds" },
-      { day: "Wednesday", type: "walk", title: "Walk + Mobility", duration: "35 min", detail: "25 min brisk walk + 10 min hip & thoracic mobility" },
+      { day: "Wednesday", type: "walk", title: "Walk + Mobility", duration: "35 min", detail: "25 min brisk walk + 10 min hip & thoracic mobility. Treadmill: 5.5 km/h, 2% incline." },
       { day: "Thursday", type: "strength", title: "Lower Body Circuit", duration: "25 min", detail: "Squats ×15, Lunges ×10/side, Glute bridges ×15, Wall sit 30s — 4 rounds" },
-      { day: "Friday", type: "walk", title: "Incline Walk", duration: "30 min", detail: "Find hills or stairs. Walk up at pace, easy pace down." },
+      { day: "Friday", type: "walk", title: "Incline Walk", duration: "30 min", detail: "Find hills or stairs. Walk up at pace, easy pace down. Treadmill: 5 km/h, 6–8% incline." },
       { day: "Saturday", type: "strength", title: "Full Body", duration: "30 min", detail: "Pushups ×15, Squats ×15, Plank 45s, Lunges ×12/side, Burpees ×5 — 3 rounds" },
       { day: "Sunday", type: "rest", title: "Recovery", duration: "20 min", detail: "Full body yoga flow. Focus on tight areas." },
     ],
@@ -33,11 +33,11 @@ const PHASES_NISHANT = [
   {
     id: 3, name: "Level Up", weeks: "9–12", subtitle: "Increase intensity, build endurance",
     weeklyPlan: [
-      { day: "Monday", type: "cardio", title: "Walk/Jog Intervals", duration: "30 min", detail: "Walk 2 min, jog 1 min. Repeat 10×. Cool down 5 min." },
+      { day: "Monday", type: "cardio", title: "Walk/Jog Intervals", duration: "30 min", detail: "Walk 2 min, jog 1 min. Repeat 10×. Cool down 5 min. Treadmill: walk 5.5 km/h, jog 7.5–8 km/h." },
       { day: "Tuesday", type: "strength", title: "Push Day", duration: "30 min", detail: "Pushups ×15, Diamond pushups ×8, Dips ×12, Pike pushups ×10, Plank 60s — 4 rounds" },
-      { day: "Wednesday", type: "cardio", title: "Brisk Walk", duration: "40 min", detail: "Fast-paced walk. Arms swinging. Keep heart rate up." },
+      { day: "Wednesday", type: "cardio", title: "Brisk Walk", duration: "40 min", detail: "Fast-paced walk. Arms swinging. Keep heart rate up. Treadmill: 6–6.5 km/h, 3% incline." },
       { day: "Thursday", type: "strength", title: "Pull + Legs", duration: "30 min", detail: "Squats ×20, Lunges ×12/side, Inverted rows ×10, Glute bridges ×20, Burpees ×8 — 4 rounds" },
-      { day: "Friday", type: "cardio", title: "Walk/Jog Intervals", duration: "30 min", detail: "Walk 1 min, jog 2 min. Repeat 8×. Push yourself." },
+      { day: "Friday", type: "cardio", title: "Walk/Jog Intervals", duration: "30 min", detail: "Walk 1 min, jog 2 min. Repeat 8×. Push yourself. Treadmill: walk 5.5 km/h, jog 8–8.5 km/h." },
       { day: "Saturday", type: "strength", title: "Full Body Challenge", duration: "35 min", detail: "100 squats, 50 pushups, 50 lunges, 3 min plank — break as needed" },
       { day: "Sunday", type: "rest", title: "Active Recovery", duration: "25 min", detail: "Long stretch session. Yoga. Walk if you feel good." },
     ],
@@ -46,11 +46,11 @@ const PHASES_NISHANT = [
   {
     id: 4, name: "Transform", weeks: "13–20", subtitle: "Full training mode",
     weeklyPlan: [
-      { day: "Monday", type: "cardio", title: "Running", duration: "30 min", detail: "Steady jog at conversational pace." },
+      { day: "Monday", type: "cardio", title: "Running", duration: "30 min", detail: "Steady jog at conversational pace. Treadmill: 8–9 km/h, 1% incline." },
       { day: "Tuesday", type: "strength", title: "Upper Body", duration: "35 min", detail: "5 rounds: Pushups ×20, Dips ×15, Pike pushups ×12, Inverted rows ×12, Plank 90s" },
       { day: "Wednesday", type: "cardio", title: "HIIT", duration: "25 min", detail: "30s on/30s off: Burpees, Mountain climbers, Jump squats, High knees — 5 rounds" },
       { day: "Thursday", type: "strength", title: "Lower Body", duration: "35 min", detail: "5 rounds: Squats ×20, Lunges ×15/side, Single-leg bridges ×12, Jump squats ×10, Wall sit 60s" },
-      { day: "Friday", type: "cardio", title: "Long Run", duration: "35 min", detail: "Easy pace. Focus on distance, not speed." },
+      { day: "Friday", type: "cardio", title: "Long Run", duration: "35 min", detail: "Easy pace. Focus on distance, not speed. Treadmill: 8.5–9.5 km/h, 1% incline." },
       { day: "Saturday", type: "strength", title: "Full Body Power", duration: "40 min", detail: "10 burpees + 20 squats + 15 pushups + 30s plank — AMRAP 30 min" },
       { day: "Sunday", type: "rest", title: "Recovery", duration: "20 min", detail: "Full stretch. Reflect on how far you've come." },
     ],
@@ -187,7 +187,7 @@ const QUOTES_PARTNER = [
 const getToday = () => new Date().toISOString().split("T")[0];
 const getDayName = () => ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][new Date().getDay()];
 const formatDate = (d) => new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-const getWeekNumber = (s) => { if (!s) return 1; return Math.max(1, Math.ceil((new Date() - new Date(s)) / (7 * 24 * 60 * 60 * 1000))); };
+const getWeekNumber = (s) => { if (!s) return 1; const diff = new Date() - new Date(s); if (diff < 0) return 0; return Math.max(1, Math.ceil(diff / (7 * 24 * 60 * 60 * 1000))); };
 const getPhaseIdx = (s) => { const w = getWeekNumber(s); if (w <= 4) return 0; if (w <= 8) return 1; if (w <= 12) return 2; return 3; };
 const getCycleDay = (lp) => { if (!lp) return null; return (Math.floor((new Date() - new Date(lp)) / (24 * 60 * 60 * 1000)) % 28) + 1; };
 const getCyclePhaseIdx = (cd) => { if (!cd) return 0; if (cd <= 5) return 0; if (cd <= 13) return 1; if (cd <= 16) return 2; return 3; };
@@ -206,6 +206,7 @@ export default function Reforge() {
   const [phaseDetail, setPhaseDetail] = useState(null);
   const [partnerName, setPartnerName] = useState("Mrunali");
   const [setupName, setSetupName] = useState("");
+  const [startDateInput, setStartDateInput] = useState("");
 
   const [nData, setNData] = useState({ startDate: null, startWeight: 100, targetWeight: 78, weightLog: [], checkins: {}, streak: 0, bestStreak: 0 });
   const [pData, setPData] = useState({ startDate: null, startWeight: null, targetWeight: null, weightLog: [], checkins: {}, streak: 0, bestStreak: 0, lastPeriod: null, fizzyLog: [] });
@@ -347,7 +348,12 @@ export default function Reforge() {
             </div>
           </div>
         )}
-        <button style={{ ...btn, maxWidth: 320 }} onClick={() => { if (isP && setupName.trim()) setPartnerName(setupName.trim()); setData(p => ({ ...p, startDate: today })); }}>
+        <div style={{ width: "100%", maxWidth: 320, marginBottom: 20 }}>
+          <div style={{ ...lbl, textAlign: "left" }}>Start Date</div>
+          <input style={{ ...inp, colorScheme: "dark" }} type="date" value={startDateInput || today} onChange={e => setStartDateInput(e.target.value)} />
+          <p style={{ fontSize: 11, color: "#555", marginTop: 6, textAlign: "left" }}>Set to tomorrow if you want to start fresh</p>
+        </div>
+        <button style={{ ...btn, maxWidth: 320 }} onClick={() => { if (isP && setupName.trim()) setPartnerName(setupName.trim()); setData(p => ({ ...p, startDate: startDateInput || today })); setStartDateInput(""); }}>
           Begin the Journey <ArrowRight size={16} style={{ marginLeft: 6, verticalAlign: "middle" }} />
         </button>
         <div style={{ marginTop: 40, display: "flex", gap: 3, background: "rgba(255,255,255,0.04)", borderRadius: 20, padding: 3 }}>
@@ -360,187 +366,220 @@ export default function Reforge() {
   );
 
   // ─── TODAY ────────────────────────────────────────────────────────────────
+  const startDateObj = data.startDate ? new Date(data.startDate) : null;
+  const todayObj = new Date(today);
+  const notStartedYet = startDateObj && todayObj < startDateObj;
+  const daysUntilStart = notStartedYet ? Math.ceil((startDateObj - todayObj) / (24 * 60 * 60 * 1000)) : 0;
+
   const Today = () => (
     <>
       <div style={{ marginTop: 20 }}>
-        <p style={{ fontSize: 14, color: "#555", margin: 0 }}>Week {weekNum} · {dayName}</p>
+        <p style={{ fontSize: 14, color: "#555", margin: 0 }}>{notStartedYet ? `Starts ${daysUntilStart === 1 ? "tomorrow" : `in ${daysUntilStart} days`}` : `Week ${weekNum} · ${dayName}`}</p>
         <h1 style={{ fontSize: 26, fontWeight: 800, fontFamily: "'Outfit',sans-serif", color: "#fff", margin: "4px 0 0", letterSpacing: "-0.5px" }}>{isP ? `Hey ${partnerName}` : "Hey Nishant"} {isP ? "✨" : "👊"}</h1>
       </div>
-      <div style={{ marginTop: 16, padding: "16px 18px", background: `${A.p}08`, borderRadius: 14, borderLeft: `3px solid ${A.p}33` }}>
-        <p style={{ fontSize: 13, color: "#888", margin: 0, lineHeight: 1.6, fontStyle: "italic" }}>"{quote}"</p>
-      </div>
 
-      {/* Stats */}
-      <div style={{ ...card, display: "flex", gap: 8, padding: "18px 12px" }}>
-        {[{ v: latestW || "—", l: "Current kg" }, { v: lost > 0 ? `-${lost}` : "0", l: "kg lost", c: lost > 0 ? "#10b981" : "#fff" }, { v: data.streak, l: "day streak", c: A.p }].map((s, i) => (
-          <React.Fragment key={i}>
-            {i > 0 && <div style={{ width: 1, background: "rgba(255,255,255,0.05)" }} />}
-            <div style={{ textAlign: "center", flex: 1 }}>
-              <div style={{ fontSize: 26, fontWeight: 700, color: s.c || "#fff", letterSpacing: "-1px" }}>{s.v}</div>
-              <div style={{ fontSize: 11, color: "#555", marginTop: 2 }}>{s.l}</div>
-            </div>
-          </React.Fragment>
-        ))}
-      </div>
-
-      {/* Cycle Phase */}
-      {isP && pData.lastPeriod && (
-        <div style={{ ...cardG, borderColor: `${cPh.color}30`, background: `${cPh.color}08` }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div>
-              <span style={tag(cPh.color)}>{cPh.name} Phase</span>
-              <p style={{ fontSize: 13, color: "#777", marginTop: 8, marginBottom: 0 }}>Cycle Day {cDay} · {cPh.days}</p>
-            </div>
-            <div style={{ width: 44, height: 44, borderRadius: "50%", background: `${cPh.color}12`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              {cPhIdx === 0 ? <Droplets size={20} color={cPh.color} /> : cPhIdx === 1 ? <Zap size={20} color={cPh.color} /> : cPhIdx === 2 ? <Sun size={20} color={cPh.color} /> : <Moon size={20} color={cPh.color} />}
-            </div>
+      {notStartedYet ? (
+        <>
+          <div style={{ ...cardG, textAlign: "center", padding: 30 }}>
+            <div style={{ fontSize: 48, marginBottom: 12 }}>🔥</div>
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: "#fff", margin: "0 0 8px", fontFamily: "'Outfit',sans-serif" }}>Ready to go!</h2>
+            <p style={{ fontSize: 14, color: "#999", margin: 0, lineHeight: 1.7 }}>
+              Your journey begins on <strong style={{ color: A.p }}>{new Date(data.startDate).toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}</strong>.
+              Get a good sleep tonight. Lay out your workout clothes. You've got this.
+            </p>
           </div>
-          <div style={{ marginTop: 14, padding: "12px 14px", background: "rgba(0,0,0,0.2)", borderRadius: 10 }}>
-            <p style={{ fontSize: 12, fontWeight: 600, color: cPh.color, margin: "0 0 4px" }}>Today's guidance</p>
-            <p style={{ fontSize: 13, color: "#aaa", margin: 0, lineHeight: 1.6 }}>{cPh.exercise}</p>
-          </div>
-        </div>
-      )}
-
-      {isP && !pData.lastPeriod && (
-        <div style={card}>
-          <p style={{ fontSize: 15, fontWeight: 600, color: "#ddd", margin: "0 0 8px" }}>Track your cycle</p>
-          <p style={{ fontSize: 13, color: "#777", marginBottom: 16, lineHeight: 1.6 }}>Log your last period start for phase-aware exercise and nutrition guidance.</p>
-          <button style={{ ...btnO, color: "#e879a8", borderColor: "#e879a833" }} onClick={() => setShowCycleModal(true)}>
-            <Calendar size={14} style={{ marginRight: 6, verticalAlign: "middle" }} /> Log Period Start
-          </button>
-        </div>
-      )}
-
-      {/* Today's Plan */}
-      <div style={{ marginTop: 20 }}>
-        <div style={lbl}>TODAY'S PLAN</div>
-        {todayPlan ? (
-          <div style={cardG}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
-              <div style={{ width: 42, height: 42, borderRadius: 12, background: `${TC[todayPlan.type]}12`, display: "flex", alignItems: "center", justifyContent: "center" }}><TIcon type={todayPlan.type} sz={20} /></div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 18, fontWeight: 700, color: "#fff" }}>{todayPlan.title}</div>
-                <div style={{ display: "flex", gap: 8, marginTop: 4, alignItems: "center", flexWrap: "wrap" }}>
-                  <span style={tag(TC[todayPlan.type])}>{todayPlan.type}</span>
-                  <span style={{ fontSize: 12, color: "#666" }}><Clock size={12} style={{ verticalAlign: "middle", marginRight: 3 }} />{todayPlan.duration}</span>
-                  {todayPlan.stepGoal && <span style={{ fontSize: 12, color: "#6366f1" }}><Footprints size={12} style={{ verticalAlign: "middle", marginRight: 3 }} />{todayPlan.stepGoal.toLocaleString()}</span>}
+          <div style={{ marginTop: 20 }}>
+            <div style={lbl}>YOUR FIRST WEEK PREVIEW</div>
+            {phase.weeklyPlan.map((d, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 16px", background: `${TC[d.type] || "#666"}08`, borderRadius: 14, border: `1px solid ${TC[d.type] || "#666"}12`, marginTop: 8 }}>
+                <div style={{ width: 34, height: 34, borderRadius: 10, background: `${TC[d.type]}10`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><TIcon type={d.type} sz={16} /></div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between" }}><span style={{ fontSize: 13, fontWeight: 600, color: "#ccc" }}>{d.day}</span><span style={{ fontSize: 12, color: "#555" }}>{d.duration}</span></div>
+                  <div style={{ fontSize: 12, color: "#777", marginTop: 2 }}>{d.title}</div>
                 </div>
               </div>
-            </div>
-            <p style={{ fontSize: 14, color: "#bbb", margin: 0, lineHeight: 1.7, padding: "12px 14px", background: "rgba(0,0,0,0.15)", borderRadius: 10 }}>{todayPlan.detail}</p>
-            {isP && pData.lastPeriod && cPhIdx === 0 && todayPlan.type === "strength" && (
-              <div style={{ marginTop: 10, padding: "10px 14px", background: `${cPh.color}0c`, borderRadius: 10, border: `1px solid ${cPh.color}20` }}>
-                <p style={{ fontSize: 12, color: cPh.color, margin: 0 }}>💡 You're on your period — it's ok to skip this and do a gentle walk instead.</p>
-              </div>
-            )}
-            {isP && pData.lastPeriod && (cPhIdx === 1 || cPhIdx === 2) && todayPlan.type !== "rest" && (
-              <div style={{ marginTop: 10, padding: "10px 14px", background: `${cPh.color}0c`, borderRadius: 10, border: `1px solid ${cPh.color}20` }}>
-                <p style={{ fontSize: 12, color: cPh.color, margin: 0 }}>⚡ {cPh.name} phase — energy is high! Push a bit harder today.</p>
-              </div>
-            )}
+            ))}
           </div>
-        ) : (
-          <div style={card}><p style={{ fontSize: 15, fontWeight: 600, color: "#10b981", margin: 0 }}>Rest Day 🧘</p><p style={{ fontSize: 13, color: "#777", lineHeight: 1.6 }}>Recovery is progress. Stretch, hydrate, rest.</p></div>
-        )}
-      </div>
-
-      {/* Checklist */}
-      <div style={{ marginTop: 20 }}>
-        <div style={lbl}>DAILY CHECKLIST · {ckKeys.filter(k => ci[k]).length}/{ckKeys.length}</div>
-        {[
-          { k: "exercise", t: isP ? "Movement Done" : "Exercise Done", d: isP ? "Completed today's activity" : "Completed today's workout" },
-          ...(hasSteps ? [{ k: "steps", t: "Step Goal Hit", d: `Reached ${todayPlan?.stepGoal?.toLocaleString()} steps` }] : []),
-          { k: "nutrition", t: "Nutrition on Track", d: "Followed today's guidelines" },
-          { k: "water", t: "Water Goal", d: `${isP ? "2L+" : "2.5L+"} of water today` },
-        ].map(({ k, t, d }) => (
-          <div key={k} onClick={() => toggleCi(k)} style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 16px", background: ci[k] ? `${A.p}0d` : "rgba(255,255,255,0.015)", borderRadius: 12, cursor: "pointer", border: `1px solid ${ci[k] ? A.p + "30" : "rgba(255,255,255,0.04)"}`, marginTop: 8, transition: "all 0.2s" }}>
-            <div style={{ width: 24, height: 24, borderRadius: 8, border: `2px solid ${ci[k] ? A.p : "#3a3a3a"}`, background: ci[k] ? A.p : "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              {ci[k] && <Check size={14} color="#0a0c13" strokeWidth={3} />}
-            </div>
-            <div><div style={{ fontSize: 14, fontWeight: 600, color: "#ddd" }}>{t}</div><div style={{ fontSize: 12, color: "#666" }}>{d}</div></div>
+        </>
+      ) : (
+        <>
+          <div style={{ marginTop: 16, padding: "16px 18px", background: `${A.p}08`, borderRadius: 14, borderLeft: `3px solid ${A.p}33` }}>
+            <p style={{ fontSize: 13, color: "#888", margin: 0, lineHeight: 1.6, fontStyle: "italic" }}>"{quote}"</p>
           </div>
-        ))}
-      </div>
 
-      {/* Fizzy Drink Budget (Mrunali only) */}
-      {isP && data.startDate && (
-        <div style={{ marginTop: 20 }}>
-          <div style={lbl}>FIZZY DRINK BUDGET · {fizzyRemaining}/{fizzyMax} left</div>
-          <div style={{ ...card, border: `1px solid ${fizzyRemaining > 0 ? "rgba(255,255,255,0.05)" : "#ef444422"}` }}>
-            {/* Bubble indicators */}
-            <div style={{ display: "flex", gap: 8, marginBottom: 14, flexWrap: "wrap" }}>
-              {Array.from({ length: fizzyMax }).map((_, i) => {
-                const used = i < fizzyThisWeek.length;
-                const drink = used ? FIZZY_DRINKS.find(d => d.id === fizzyThisWeek[i]?.drink) : null;
-                return (
-                  <div key={i} style={{ width: 38, height: 38, borderRadius: 12, background: used ? `${drink?.color || "#666"}20` : "rgba(255,255,255,0.04)", border: `1.5px solid ${used ? `${drink?.color || "#666"}40` : "rgba(255,255,255,0.08)"}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, opacity: used ? 0.6 : 1, transition: "all 0.2s" }}>
-                    {used ? drink?.emoji || "🥤" : <span style={{ fontSize: 18, opacity: 0.3 }}>🫧</span>}
-                  </div>
-                );
-              })}
+          {/* Stats */}
+          <div style={{ ...card, display: "flex", gap: 8, padding: "18px 12px" }}>
+            {[{ v: latestW || "—", l: "Current kg" }, { v: lost > 0 ? `-${lost}` : "0", l: "kg lost", c: lost > 0 ? "#10b981" : "#fff" }, { v: data.streak, l: "day streak", c: A.p }].map((s, i) => (
+              <React.Fragment key={i}>
+                {i > 0 && <div style={{ width: 1, background: "rgba(255,255,255,0.05)" }} />}
+                <div style={{ textAlign: "center", flex: 1 }}>
+                  <div style={{ fontSize: 26, fontWeight: 700, color: s.c || "#fff", letterSpacing: "-1px" }}>{s.v}</div>
+                  <div style={{ fontSize: 11, color: "#555", marginTop: 2 }}>{s.l}</div>
+                </div>
+              </React.Fragment>
+            ))}
+          </div>
+
+          {/* Cycle Phase */}
+          {isP && pData.lastPeriod && (
+            <div style={{ ...cardG, borderColor: `${cPh.color}30`, background: `${cPh.color}08` }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div>
+                  <span style={tag(cPh.color)}>{cPh.name} Phase</span>
+                  <p style={{ fontSize: 13, color: "#777", marginTop: 8, marginBottom: 0 }}>Cycle Day {cDay} · {cPh.days}</p>
+                </div>
+                <div style={{ width: 44, height: 44, borderRadius: "50%", background: `${cPh.color}12`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  {cPhIdx === 0 ? <Droplets size={20} color={cPh.color} /> : cPhIdx === 1 ? <Zap size={20} color={cPh.color} /> : cPhIdx === 2 ? <Sun size={20} color={cPh.color} /> : <Moon size={20} color={cPh.color} />}
+                </div>
+              </div>
+              <div style={{ marginTop: 14, padding: "12px 14px", background: "rgba(0,0,0,0.2)", borderRadius: 10 }}>
+                <p style={{ fontSize: 12, fontWeight: 600, color: cPh.color, margin: "0 0 4px" }}>Today's guidance</p>
+                <p style={{ fontSize: 13, color: "#aaa", margin: 0, lineHeight: 1.6 }}>{cPh.exercise}</p>
+              </div>
             </div>
-            {/* This week's log */}
-            {fizzyThisWeek.length > 0 && (
-              <div style={{ marginBottom: 12 }}>
-                {fizzyThisWeek.map((e, i) => {
-                  const drink = FIZZY_DRINKS.find(d => d.id === e.drink);
-                  return (
-                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginTop: i > 0 ? 6 : 0 }}>
-                      <span style={{ fontSize: 13 }}>{drink?.emoji}</span>
-                      <span style={{ fontSize: 12, color: "#888" }}>{drink?.name}</span>
-                      <span style={{ fontSize: 11, color: "#555", marginLeft: "auto" }}>{formatDate(e.date)}</span>
+          )}
+
+          {isP && !pData.lastPeriod && (
+            <div style={card}>
+              <p style={{ fontSize: 15, fontWeight: 600, color: "#ddd", margin: "0 0 8px" }}>Track your cycle</p>
+              <p style={{ fontSize: 13, color: "#777", marginBottom: 16, lineHeight: 1.6 }}>Log your last period start for phase-aware exercise and nutrition guidance.</p>
+              <button style={{ ...btnO, color: "#e879a8", borderColor: "#e879a833" }} onClick={() => setShowCycleModal(true)}>
+                <Calendar size={14} style={{ marginRight: 6, verticalAlign: "middle" }} /> Log Period Start
+              </button>
+            </div>
+          )}
+
+          {/* Today's Plan */}
+          <div style={{ marginTop: 20 }}>
+            <div style={lbl}>TODAY'S PLAN</div>
+            {todayPlan ? (
+              <div style={cardG}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                  <div style={{ width: 42, height: 42, borderRadius: 12, background: `${TC[todayPlan.type]}12`, display: "flex", alignItems: "center", justifyContent: "center" }}><TIcon type={todayPlan.type} sz={20} /></div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 18, fontWeight: 700, color: "#fff" }}>{todayPlan.title}</div>
+                    <div style={{ display: "flex", gap: 8, marginTop: 4, alignItems: "center", flexWrap: "wrap" }}>
+                      <span style={tag(TC[todayPlan.type])}>{todayPlan.type}</span>
+                      <span style={{ fontSize: 12, color: "#666" }}><Clock size={12} style={{ verticalAlign: "middle", marginRight: 3 }} />{todayPlan.duration}</span>
+                      {todayPlan.stepGoal && <span style={{ fontSize: 12, color: "#6366f1" }}><Footprints size={12} style={{ verticalAlign: "middle", marginRight: 3 }} />{todayPlan.stepGoal.toLocaleString()}</span>}
                     </div>
-                  );
-                })}
+                  </div>
+                </div>
+                <p style={{ fontSize: 14, color: "#bbb", margin: 0, lineHeight: 1.7, padding: "12px 14px", background: "rgba(0,0,0,0.15)", borderRadius: 10 }}>{todayPlan.detail}</p>
+                {isP && pData.lastPeriod && cPhIdx === 0 && todayPlan.type === "strength" && (
+                  <div style={{ marginTop: 10, padding: "10px 14px", background: `${cPh.color}0c`, borderRadius: 10, border: `1px solid ${cPh.color}20` }}>
+                    <p style={{ fontSize: 12, color: cPh.color, margin: 0 }}>💡 You're on your period — it's ok to skip this and do a gentle walk instead.</p>
+                  </div>
+                )}
+                {isP && pData.lastPeriod && (cPhIdx === 1 || cPhIdx === 2) && todayPlan.type !== "rest" && (
+                  <div style={{ marginTop: 10, padding: "10px 14px", background: `${cPh.color}0c`, borderRadius: 10, border: `1px solid ${cPh.color}20` }}>
+                    <p style={{ fontSize: 12, color: cPh.color, margin: 0 }}>⚡ {cPh.name} phase — energy is high! Push a bit harder today.</p>
+                  </div>
+                )}
               </div>
+            ) : (
+              <div style={card}><p style={{ fontSize: 15, fontWeight: 600, color: "#10b981", margin: 0 }}>Rest Day 🧘</p><p style={{ fontSize: 13, color: "#777", lineHeight: 1.6 }}>Recovery is progress. Stretch, hydrate, rest.</p></div>
             )}
-            {/* Message */}
-            <p style={{ fontSize: 12, color: fizzyRemaining > 0 ? "#888" : "#ef4444", margin: "0 0 14px", lineHeight: 1.5, fontStyle: "italic" }}>{fizzyMsg}</p>
-            {/* Log button */}
-            <button
-              style={{ background: fizzyRemaining > 0 ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.02)", color: fizzyRemaining > 0 ? "#ddd" : "#444", border: `1px solid ${fizzyRemaining > 0 ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.03)"}`, borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 600, cursor: fizzyRemaining > 0 ? "pointer" : "default", width: "100%", fontFamily: "inherit", transition: "all 0.2s" }}
-              onClick={() => fizzyRemaining > 0 && setShowFizzyModal(true)}
-            >
-              {fizzyRemaining > 0 ? `🫧 Log a Fizzy Drink (${fizzyRemaining} left)` : "✅ Budget used — great discipline!"}
-            </button>
           </div>
-        </div>
-      )}
 
-      {/* Buttons */}
-      <div style={{ marginTop: 20, display: "flex", gap: 10 }}>
-        <button style={{ ...btnO, flex: 1 }} onClick={() => { setShowWeightModal(true); setWeightInput(String(latestW || "")); }}><TrendingDown size={14} style={{ marginRight: 6, verticalAlign: "middle" }} />Log Weight</button>
-        {isP && <button style={{ ...btnO, flex: 1, color: "#e879a8", borderColor: "#e879a833" }} onClick={() => setShowCycleModal(true)}><Droplets size={14} style={{ marginRight: 6, verticalAlign: "middle" }} />Log Period</button>}
-      </div>
-
-      {/* Milestone (Nishant) */}
-      {!isP && nextM && (
-        <div style={{ ...card, marginTop: 16 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div><p style={{ fontSize: 12, color: "#666", margin: 0 }}>Next milestone</p><p style={{ fontSize: 15, fontWeight: 700, color: "#fff", margin: "4px 0 0" }}>{nextM.emoji} {nextM.label}</p></div>
-            <div style={{ fontSize: 22, fontWeight: 700, color: A.p }}>{toM} kg</div>
+          {/* Checklist */}
+          <div style={{ marginTop: 20 }}>
+            <div style={lbl}>DAILY CHECKLIST · {ckKeys.filter(k => ci[k]).length}/{ckKeys.length}</div>
+            {[
+              { k: "exercise", t: isP ? "Movement Done" : "Exercise Done", d: isP ? "Completed today's activity" : "Completed today's workout" },
+              ...(hasSteps ? [{ k: "steps", t: "Step Goal Hit", d: `Reached ${todayPlan?.stepGoal?.toLocaleString()} steps` }] : []),
+              { k: "nutrition", t: "Nutrition on Track", d: "Followed today's guidelines" },
+              { k: "water", t: "Water Goal", d: `${isP ? "2L+" : "2.5L+"} of water today` },
+            ].map(({ k, t, d }) => (
+              <div key={k} onClick={() => toggleCi(k)} style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 16px", background: ci[k] ? `${A.p}0d` : "rgba(255,255,255,0.015)", borderRadius: 12, cursor: "pointer", border: `1px solid ${ci[k] ? A.p + "30" : "rgba(255,255,255,0.04)"}`, marginTop: 8, transition: "all 0.2s" }}>
+                <div style={{ width: 24, height: 24, borderRadius: 8, border: `2px solid ${ci[k] ? A.p : "#3a3a3a"}`, background: ci[k] ? A.p : "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  {ci[k] && <Check size={14} color="#0a0c13" strokeWidth={3} />}
+                </div>
+                <div><div style={{ fontSize: 14, fontWeight: 600, color: "#ddd" }}>{t}</div><div style={{ fontSize: 12, color: "#666" }}>{d}</div></div>
+              </div>
+            ))}
           </div>
-          <div style={{ width: "100%", height: 8, background: "rgba(255,255,255,0.05)", borderRadius: 4, overflow: "hidden", marginTop: 8 }}>
-            <div style={{ width: `${Math.max(5, 100 - (toM / (data.startWeight - nextM.kg)) * 100)}%`, height: "100%", background: A.gr, borderRadius: 4, transition: "width 0.6s ease" }} />
-          </div>
-        </div>
-      )}
 
-      {/* Nutrition */}
-      <div style={{ marginTop: 20 }}>
-        <div style={lbl}>{isP && pData.lastPeriod ? `${cPh.name} PHASE NUTRITION` : `PHASE ${phase.id} NUTRITION`}</div>
-        <div style={card}>
-          {isP && pData.lastPeriod ? (
-            <p style={{ fontSize: 14, color: "#bbb", margin: 0, lineHeight: 1.8 }}>{cPh.nutrition}</p>
-          ) : phase.nutrition.map((r, i) => (
-            <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", marginTop: i > 0 ? 10 : 0 }}>
-              <Salad size={14} color={A.p} style={{ marginTop: 3, flexShrink: 0 }} />
-              <p style={{ fontSize: 13, color: "#bbb", margin: 0, lineHeight: 1.6 }}>{r}</p>
+          {/* Fizzy Drink Budget (Mrunali only) */}
+          {isP && data.startDate && (
+            <div style={{ marginTop: 20 }}>
+              <div style={lbl}>FIZZY DRINK BUDGET · {fizzyRemaining}/{fizzyMax} left</div>
+              <div style={{ ...card, border: `1px solid ${fizzyRemaining > 0 ? "rgba(255,255,255,0.05)" : "#ef444422"}` }}>
+                {/* Bubble indicators */}
+                <div style={{ display: "flex", gap: 8, marginBottom: 14, flexWrap: "wrap" }}>
+                  {Array.from({ length: fizzyMax }).map((_, i) => {
+                    const used = i < fizzyThisWeek.length;
+                    const drink = used ? FIZZY_DRINKS.find(d => d.id === fizzyThisWeek[i]?.drink) : null;
+                    return (
+                      <div key={i} style={{ width: 38, height: 38, borderRadius: 12, background: used ? `${drink?.color || "#666"}20` : "rgba(255,255,255,0.04)", border: `1.5px solid ${used ? `${drink?.color || "#666"}40` : "rgba(255,255,255,0.08)"}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, opacity: used ? 0.6 : 1, transition: "all 0.2s" }}>
+                        {used ? drink?.emoji || "🥤" : <span style={{ fontSize: 18, opacity: 0.3 }}>🫧</span>}
+                      </div>
+                    );
+                  })}
+                </div>
+                {/* This week's log */}
+                {fizzyThisWeek.length > 0 && (
+                  <div style={{ marginBottom: 12 }}>
+                    {fizzyThisWeek.map((e, i) => {
+                      const drink = FIZZY_DRINKS.find(d => d.id === e.drink);
+                      return (
+                        <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginTop: i > 0 ? 6 : 0 }}>
+                          <span style={{ fontSize: 13 }}>{drink?.emoji}</span>
+                          <span style={{ fontSize: 12, color: "#888" }}>{drink?.name}</span>
+                          <span style={{ fontSize: 11, color: "#555", marginLeft: "auto" }}>{formatDate(e.date)}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+                {/* Message */}
+                <p style={{ fontSize: 12, color: fizzyRemaining > 0 ? "#888" : "#ef4444", margin: "0 0 14px", lineHeight: 1.5, fontStyle: "italic" }}>{fizzyMsg}</p>
+                {/* Log button */}
+                <button
+                  style={{ background: fizzyRemaining > 0 ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.02)", color: fizzyRemaining > 0 ? "#ddd" : "#444", border: `1px solid ${fizzyRemaining > 0 ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.03)"}`, borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 600, cursor: fizzyRemaining > 0 ? "pointer" : "default", width: "100%", fontFamily: "inherit", transition: "all 0.2s" }}
+                  onClick={() => fizzyRemaining > 0 && setShowFizzyModal(true)}
+                >
+                  {fizzyRemaining > 0 ? `🫧 Log a Fizzy Drink (${fizzyRemaining} left)` : "✅ Budget used — great discipline!"}
+                </button>
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
+          )}
+
+          {/* Buttons */}
+          <div style={{ marginTop: 20, display: "flex", gap: 10 }}>
+            <button style={{ ...btnO, flex: 1 }} onClick={() => { setShowWeightModal(true); setWeightInput(String(latestW || "")); }}><TrendingDown size={14} style={{ marginRight: 6, verticalAlign: "middle" }} />Log Weight</button>
+            {isP && <button style={{ ...btnO, flex: 1, color: "#e879a8", borderColor: "#e879a833" }} onClick={() => setShowCycleModal(true)}><Droplets size={14} style={{ marginRight: 6, verticalAlign: "middle" }} />Log Period</button>}
+          </div>
+
+          {/* Milestone (Nishant) */}
+          {!isP && nextM && (
+            <div style={{ ...card, marginTop: 16 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div><p style={{ fontSize: 12, color: "#666", margin: 0 }}>Next milestone</p><p style={{ fontSize: 15, fontWeight: 700, color: "#fff", margin: "4px 0 0" }}>{nextM.emoji} {nextM.label}</p></div>
+                <div style={{ fontSize: 22, fontWeight: 700, color: A.p }}>{toM} kg</div>
+              </div>
+              <div style={{ width: "100%", height: 8, background: "rgba(255,255,255,0.05)", borderRadius: 4, overflow: "hidden", marginTop: 8 }}>
+                <div style={{ width: `${Math.max(5, 100 - (toM / (data.startWeight - nextM.kg)) * 100)}%`, height: "100%", background: A.gr, borderRadius: 4, transition: "width 0.6s ease" }} />
+              </div>
+            </div>
+          )}
+
+          {/* Nutrition */}
+          <div style={{ marginTop: 20 }}>
+            <div style={lbl}>{isP && pData.lastPeriod ? `${cPh.name} PHASE NUTRITION` : `PHASE ${phase.id} NUTRITION`}</div>
+            <div style={card}>
+              {isP && pData.lastPeriod ? (
+                <p style={{ fontSize: 14, color: "#bbb", margin: 0, lineHeight: 1.8 }}>{cPh.nutrition}</p>
+              ) : phase.nutrition.map((r, i) => (
+                <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", marginTop: i > 0 ? 10 : 0 }}>
+                  <Salad size={14} color={A.p} style={{ marginTop: 3, flexShrink: 0 }} />
+                  <p style={{ fontSize: 13, color: "#bbb", margin: 0, lineHeight: 1.6 }}>{r}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 
