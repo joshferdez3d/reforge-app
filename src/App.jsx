@@ -199,10 +199,67 @@ const CRAVING_TRIGGERS = [
   },
 ];
 
-// Arsenal likely match days (IST late-night = UK evening kickoffs)
-const isLikelyMatchDay = () => {
-  const day = new Date().getDay();
-  return day === 6 || day === 0 || day === 2 || day === 3; // Sat, Sun, Tue, Wed
+// ─── ARSENAL MATCH DATA (football-data.org free tier) ─────────────────────────
+const ARSENAL_API_KEY = "f71377d63a934283a340d8ada7aed410";
+const ARSENAL_TEAM_ID = 57;
+const MATCH_CACHE_KEY = "rf2-arsenal-matches";
+const MATCH_CACHE_MS = 12 * 60 * 60 * 1000; // refresh every 12h
+
+const fetchArsenalMatches = async () => {
+  try {
+    const cached = localStorage.getItem(MATCH_CACHE_KEY);
+    if (cached) {
+      const { data, ts } = JSON.parse(cached);
+      if (Date.now() - ts < MATCH_CACHE_MS) return data;
+    }
+    const res = await fetch(
+      `https://api.football-data.org/v4/teams/${ARSENAL_TEAM_ID}/matches?status=SCHEDULED&limit=10`,
+      { headers: { "X-Auth-Token": ARSENAL_API_KEY } }
+    );
+    if (!res.ok) throw new Error(`API ${res.status}`);
+    const json = await res.json();
+    const matches = (json.matches || []).map(m => ({
+      utcDate: m.utcDate,
+      home: m.homeTeam?.shortName || m.homeTeam?.name || "Home",
+      away: m.awayTeam?.shortName || m.awayTeam?.name || "Away",
+      competition: m.competition?.name || "",
+      isHome: m.homeTeam?.id === ARSENAL_TEAM_ID,
+    }));
+    localStorage.setItem(MATCH_CACHE_KEY, JSON.stringify({ data: matches, ts: Date.now() }));
+    return matches;
+  } catch (e) {
+    // Return stale cache if available, otherwise null
+    try { const c = localStorage.getItem(MATCH_CACHE_KEY); if (c) return JSON.parse(c).data; } catch (_) {}
+    return null;
+  }
+};
+
+// Match within next 20h = show prep card (covers afternoon → 1:30am window)
+const getNextMatchSoon = (matches) => {
+  if (!matches) return null;
+  const now = Date.now();
+  const cutoff = now + 20 * 60 * 60 * 1000;
+  for (const m of matches) {
+    const t = new Date(m.utcDate).getTime();
+    if (t >= now && t <= cutoff) return m;
+  }
+  return null;
+};
+
+// Next upcoming match regardless of when
+const getUpcomingMatch = (matches) => {
+  if (!matches) return null;
+  const now = Date.now();
+  for (const m of matches) {
+    if (new Date(m.utcDate).getTime() >= now) return m;
+  }
+  return null;
+};
+
+// Format UTC date to IST time string (e.g. "Fri 1:30am")
+const formatMatchTimeIST = (utcDate) => {
+  const d = new Date(utcDate);
+  return d.toLocaleString("en-IN", { timeZone: "Asia/Kolkata", weekday: "short", hour: "numeric", minute: "2-digit", hour12: true });
 };
 
 const QUOTES = [
@@ -266,6 +323,7 @@ export default function Reforge() {
   const [pData, setPData] = useState({ startDate: null, startWeight: null, targetWeight: null, weightLog: [], checkins: {}, streak: 0, bestStreak: 0, lastPeriod: null, fizzyLog: [] });
 
   const [showFizzyModal, setShowFizzyModal] = useState(false);
+  const [arsenalMatches, setArsenalMatches] = useState(null);
 
   const isP = activeUser === "partner";
   const data = isP ? pData : nData;
@@ -283,6 +341,11 @@ export default function Reforge() {
   useEffect(() => { if (loaded) try { localStorage.setItem("rf2-n", JSON.stringify(nData)) } catch (e) { } }, [nData, loaded]);
   useEffect(() => { if (loaded) try { localStorage.setItem("rf2-p", JSON.stringify(pData)) } catch (e) { } }, [pData, loaded]);
   useEffect(() => { if (loaded) try { localStorage.setItem("rf2-pn", partnerName) } catch (e) { } }, [partnerName, loaded]);
+
+  // Fetch Arsenal fixtures (Nishant only, on load)
+  useEffect(() => {
+    if (loaded) fetchArsenalMatches().then(m => { if (m) setArsenalMatches(m); });
+  }, [loaded]);
 
   // Derived
   const today = getToday();
@@ -308,7 +371,9 @@ export default function Reforge() {
   const todayCravingsHandled = (!isP && nData.cravingsHandled) ? (nData.cravingsHandled[today] || []) : [];
   const totalCravingsHandled = (!isP && nData.cravingsHandled) ? Object.values(nData.cravingsHandled).reduce((sum, arr) => sum + (Array.isArray(arr) ? arr.length : 0), 0) : 0;
   const matchNightPreppedToday = !isP && nData.matchNightPrepped ? !!nData.matchNightPrepped[today] : false;
-  const showMatchNightCard = !isP && (isLikelyMatchDay() || matchNightPreppedToday);
+  const arsenalSoon = !isP ? getNextMatchSoon(arsenalMatches) : null;
+  const arsenalNext = !isP ? getUpcomingMatch(arsenalMatches) : null;
+  const showMatchNightCard = !isP && (arsenalSoon !== null || matchNightPreppedToday);
 
   // Fizzy drink tracking
   const fizzyMax = isP ? FIZZY_ALLOWANCE[phIdx] || 1 : 0;
@@ -599,9 +664,16 @@ export default function Reforge() {
                 <div style={{ ...card, marginTop: 0, borderColor: "#ef444425", background: "linear-gradient(135deg,rgba(239,68,68,0.06),rgba(239,68,68,0.02))" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
                     <span style={{ fontSize: 22 }}>⚽</span>
-                    <div>
+                    <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>Match Night Prep</div>
-                      <div style={{ fontSize: 12, color: "#888" }}>Arsenal might play tonight — prep your snacks!</div>
+                      {arsenalSoon ? (
+                        <div style={{ fontSize: 12, color: "#ef4444", marginTop: 2 }}>
+                          {arsenalSoon.isHome ? `Arsenal vs ${arsenalSoon.away}` : `${arsenalSoon.home} vs Arsenal`} — {formatMatchTimeIST(arsenalSoon.utcDate)}
+                          {arsenalSoon.competition ? <span style={{ color: "#888" }}> · {arsenalSoon.competition}</span> : null}
+                        </div>
+                      ) : (
+                        <div style={{ fontSize: 12, color: "#888" }}>Prep your match snacks before dinner!</div>
+                      )}
                     </div>
                   </div>
                   <div style={{ padding: "12px 14px", background: "rgba(0,0,0,0.2)", borderRadius: 10, marginBottom: 12 }}>
@@ -620,7 +692,7 @@ export default function Reforge() {
                     <span style={{ fontSize: 18 }}>⚽</span>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 14, fontWeight: 600, color: "#10b981" }}>Match snacks prepped!</div>
-                      <div style={{ fontSize: 12, color: "#666" }}>No 1am Zomato tonight. You've got this.</div>
+                      <div style={{ fontSize: 12, color: "#666" }}>{arsenalSoon ? `${arsenalSoon.isHome ? `Arsenal vs ${arsenalSoon.away}` : `${arsenalSoon.home} vs Arsenal`} — enjoy the game!` : "No 1am Zomato tonight. You've got this."}</div>
                     </div>
                     <Check size={18} color="#10b981" />
                   </div>
@@ -638,7 +710,11 @@ export default function Reforge() {
                         <span style={{ fontSize: 20 }}>{trigger.emoji}</span>
                         <div>
                           <div style={{ fontSize: 14, fontWeight: 600, color: "#ddd" }}>{trigger.label}</div>
-                          <div style={{ fontSize: 11, color: "#666" }}>{trigger.time}</div>
+                          <div style={{ fontSize: 11, color: "#666" }}>
+                            {trigger.id === "match-night" && arsenalNext
+                              ? `Next: ${arsenalNext.isHome ? `vs ${arsenalNext.away}` : `at ${arsenalNext.home}`} · ${formatMatchTimeIST(arsenalNext.utcDate)}`
+                              : trigger.time}
+                          </div>
                         </div>
                       </div>
                       {handled && <span style={tag("#10b981")}>handled</span>}
