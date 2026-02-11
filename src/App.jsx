@@ -9,11 +9,11 @@ const PHASES_NISHANT = [
     weeklyPlan: [
       { day: "Monday", type: "walk", title: "Morning Walk", duration: "25 min", detail: "Easy pace, focus on breathing. No rush. Treadmill: 4.5–5 km/h, 1% incline." },
       { day: "Tuesday", type: "strength", title: "Bodyweight Basics", duration: "15 min", detail: "Wall pushups ×10, Chair squats ×10, Plank 20s — 3 rounds" },
-      { day: "Wednesday", type: "walk", title: "Walk + Stretch", duration: "30 min", detail: "20 min walk + 10 min full body stretch. Treadmill: 5 km/h, 1% incline." },
-      { day: "Thursday", type: "rest", title: "Active Rest", duration: "15 min", detail: "Gentle mobility work. Hip circles, shoulder rolls, neck stretches." },
+      { day: "Wednesday", type: "walk", title: "Walk + Stretch", duration: "30 min", detail: "20 min walk (5 km/h, 1% incline), then stretch: Neck rolls 10 each way → Shoulder circles 10 forward/back → Standing quad stretch 30s each leg (hold wall for balance) → Standing hamstring stretch 30s each (foot on low step, lean forward) → Hip flexor stretch 30s each (big lunge, push hips forward) → Chest doorway stretch 30s → Seated spinal twist 30s each side." },
+      { day: "Thursday", type: "rest", title: "Active Rest", duration: "15 min", detail: "Hip circles 10 each direction → Leg swings 10 each (forward/back, hold wall) → Cat-cow on all fours 10 reps → World's greatest stretch 5 each side (lunge, twist, reach up) → Shoulder rolls 10 each → Neck tilts 30s each side → Child's pose 60s. Repeat if it feels good." },
       { day: "Friday", type: "strength", title: "Bodyweight Basics", duration: "15 min", detail: "Wall pushups ×12, Chair squats ×12, Plank 25s — 3 rounds" },
       { day: "Saturday", type: "walk", title: "Long Walk", duration: "40 min", detail: "Explore a new route. Listen to a podcast. Enjoy it. Treadmill: 4.5–5 km/h, 2% incline." },
-      { day: "Sunday", type: "rest", title: "Full Rest", duration: "—", detail: "Rest completely. Do some light stretching if you feel like it." },
+      { day: "Sunday", type: "rest", title: "Full Rest", duration: "—", detail: "Rest completely. If you feel like moving: neck rolls, shoulder shrugs, standing toe touch hold 30s, child's pose 60s. That's it — nothing more." },
     ],
     nutrition: ["Eat 3 meals a day — no snacking between", "Fill half your plate with vegetables", "Cut all sugary drinks — water, black coffee, tea only", "Drink 2.5L of water daily", "No food after 8pm"],
   },
@@ -22,11 +22,11 @@ const PHASES_NISHANT = [
     weeklyPlan: [
       { day: "Monday", type: "walk", title: "Brisk Walk", duration: "35 min", detail: "Push the pace. Slightly breathless but can still talk. Treadmill: 5.5–6 km/h, 2% incline." },
       { day: "Tuesday", type: "strength", title: "Upper Body Circuit", duration: "25 min", detail: "Pushups ×12, Dips ×10, Pike pushups ×8, Plank 40s — 4 rounds" },
-      { day: "Wednesday", type: "walk", title: "Walk + Mobility", duration: "35 min", detail: "25 min brisk walk + 10 min hip & thoracic mobility. Treadmill: 5.5 km/h, 2% incline." },
+      { day: "Wednesday", type: "walk", title: "Walk + Mobility", duration: "35 min", detail: "25 min brisk walk (5.5 km/h, 2% incline), then mobility: 90/90 hip switches ×10 (sit on floor, rotate knees side to side) → Deep squat hold 30s (hold door frame) → Thoracic rotations ×10 each (on all fours, hand behind head, rotate open) → Pigeon stretch 45s each side → Lat stretch on door frame 30s each." },
       { day: "Thursday", type: "strength", title: "Lower Body Circuit", duration: "25 min", detail: "Squats ×15, Lunges ×10/side, Glute bridges ×15, Wall sit 30s — 4 rounds" },
       { day: "Friday", type: "walk", title: "Incline Walk", duration: "30 min", detail: "Find hills or stairs. Walk up at pace, easy pace down. Treadmill: 5 km/h, 6–8% incline." },
       { day: "Saturday", type: "strength", title: "Full Body", duration: "30 min", detail: "Pushups ×15, Squats ×15, Plank 45s, Lunges ×12/side, Burpees ×5 — 3 rounds" },
-      { day: "Sunday", type: "rest", title: "Recovery", duration: "20 min", detail: "Full body yoga flow. Focus on tight areas." },
+      { day: "Sunday", type: "rest", title: "Recovery", duration: "20 min", detail: "Hold each for 45–60s, breathe deep: Child's pose → Downward dog (pedal feet) → Low lunge hip flexor stretch each side → Pigeon pose each side → Seated forward fold → Supine spinal twist each side → Legs up the wall 2 min. Take it slow, don't force anything." },
     ],
     nutrition: ["Palm-sized protein at every meal (eggs, chicken, fish, paneer, dal)", "Fist-sized portion of carbs only (rice, roti, potato)", "Keep half plate vegetables", "Water up to 3L", "One treat meal per week — enjoy it guilt-free"],
   },
@@ -39,7 +39,7 @@ const PHASES_NISHANT = [
       { day: "Thursday", type: "strength", title: "Pull + Legs", duration: "30 min", detail: "Squats ×20, Lunges ×12/side, Inverted rows ×10, Glute bridges ×20, Burpees ×8 — 4 rounds" },
       { day: "Friday", type: "cardio", title: "Walk/Jog Intervals", duration: "30 min", detail: "Walk 1 min, jog 2 min. Repeat 8×. Push yourself. Treadmill: walk 5.5 km/h, jog 8–8.5 km/h." },
       { day: "Saturday", type: "strength", title: "Full Body Challenge", duration: "35 min", detail: "100 squats, 50 pushups, 50 lunges, 3 min plank — break as needed" },
-      { day: "Sunday", type: "rest", title: "Active Recovery", duration: "25 min", detail: "Long stretch session. Yoga. Walk if you feel good." },
+      { day: "Sunday", type: "rest", title: "Active Recovery", duration: "25 min", detail: "Option A — Stretch flow (hold 60s each): Child's pose → Cat-cow ×10 → Downward dog → Low lunge each side → Pigeon each side → Seated hamstring stretch → Supine twist each side → Legs up wall 3 min. Option B — 15 min easy walk + the hip flexor and hamstring stretches after. Pick whichever feels right." },
     ],
     nutrition: ["Meal prep Sundays — prepare lunches for the week", "Protein at every meal — aim for your palm × 1.5", "Cut refined carbs — switch to brown/whole grain", "Water 3L minimum", "No fried food during weekdays"],
   },
@@ -52,7 +52,7 @@ const PHASES_NISHANT = [
       { day: "Thursday", type: "strength", title: "Lower Body", duration: "35 min", detail: "5 rounds: Squats ×20, Lunges ×15/side, Single-leg bridges ×12, Jump squats ×10, Wall sit 60s" },
       { day: "Friday", type: "cardio", title: "Long Run", duration: "35 min", detail: "Easy pace. Focus on distance, not speed. Treadmill: 8.5–9.5 km/h, 1% incline." },
       { day: "Saturday", type: "strength", title: "Full Body Power", duration: "40 min", detail: "10 burpees + 20 squats + 15 pushups + 30s plank — AMRAP 30 min" },
-      { day: "Sunday", type: "rest", title: "Recovery", duration: "20 min", detail: "Full stretch. Reflect on how far you've come." },
+      { day: "Sunday", type: "rest", title: "Recovery", duration: "20 min", detail: "You've earned this. Hold 60s each: Foam roll quads & hamstrings (or tennis ball under feet 60s each) → Deep squat hold → Pigeon pose each side → Seated forward fold → Supine spinal twist each side → Legs up the wall 3 min. Breathe. You're a different person than Week 1." },
     ],
     nutrition: ["Track portions consistently", "Protein-forward every meal", "Whole foods only — minimize processed food", "Hydration: 3L+ water", "Sleep 7-8 hours — non-negotiable for fat loss"],
   },
@@ -262,7 +262,7 @@ export default function Reforge() {
   const [setupTargetWeight, setSetupTargetWeight] = useState("");
   const [startDateInput, setStartDateInput] = useState("");
 
-  const [nData, setNData] = useState({ startDate: null, startWeight: 100, targetWeight: 78, weightLog: [], checkins: {}, streak: 0, bestStreak: 0, cravingsHandled: {}, matchNightPrepped: {} });
+  const [nData, setNData] = useState({ startDate: null, startWeight: 103.2, targetWeight: 78, weightLog: [], checkins: {}, streak: 0, bestStreak: 0, cravingsHandled: {}, matchNightPrepped: {} });
   const [pData, setPData] = useState({ startDate: null, startWeight: null, targetWeight: null, weightLog: [], checkins: {}, streak: 0, bestStreak: 0, lastPeriod: null, fizzyLog: [] });
 
   const [showFizzyModal, setShowFizzyModal] = useState(false);
@@ -371,7 +371,7 @@ export default function Reforge() {
   };
 
   const switchU = (u) => { setAnimIn(false); setTimeout(() => { setActiveUser(u); setActiveTab("today"); setAnimIn(true); }, 200); };
-  const resetD = () => { if (confirm("Reset all data? Cannot be undone.")) { if (!isP) setNData({ startDate: null, startWeight: 100, targetWeight: 78, weightLog: [], checkins: {}, streak: 0, bestStreak: 0, cravingsHandled: {}, matchNightPrepped: {} }); else setPData({ startDate: null, startWeight: null, targetWeight: null, weightLog: [], checkins: {}, streak: 0, bestStreak: 0, lastPeriod: null, fizzyLog: [] }); } };
+  const resetD = () => { if (confirm("Reset all data? Cannot be undone.")) { if (!isP) setNData({ startDate: null, startWeight: 103.2, targetWeight: 78, weightLog: [], checkins: {}, streak: 0, bestStreak: 0, cravingsHandled: {}, matchNightPrepped: {} }); else setPData({ startDate: null, startWeight: null, targetWeight: null, weightLog: [], checkins: {}, streak: 0, bestStreak: 0, lastPeriod: null, fizzyLog: [] }); } };
 
   // Theme
   const A = isP ? { p: "#e879a8", s: "#c084fc", g: "rgba(232,121,168,0.1)", gr: "linear-gradient(135deg,#e879a8,#c084fc)" } : { p: "#f59e0b", s: "#f97316", g: "rgba(245,158,11,0.1)", gr: "linear-gradient(135deg,#f59e0b,#f97316)" };
