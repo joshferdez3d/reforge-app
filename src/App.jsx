@@ -199,9 +199,7 @@ const CRAVING_TRIGGERS = [
   },
 ];
 
-// ─── ARSENAL MATCH DATA (football-data.org free tier) ─────────────────────────
-const ARSENAL_API_KEY = "f71377d63a934283a340d8ada7aed410";
-const ARSENAL_TEAM_ID = 57;
+// ─── ARSENAL MATCH DATA (via Vercel serverless proxy → football-data.org) ─────
 const MATCH_CACHE_KEY = "rf2-arsenal-matches";
 const MATCH_CACHE_MS = 12 * 60 * 60 * 1000; // refresh every 12h
 
@@ -212,10 +210,7 @@ const fetchArsenalMatches = async () => {
       const { data, ts } = JSON.parse(cached);
       if (Date.now() - ts < MATCH_CACHE_MS) return data;
     }
-    const res = await fetch(
-      `https://api.football-data.org/v4/teams/${ARSENAL_TEAM_ID}/matches?status=SCHEDULED&limit=10`,
-      { headers: { "X-Auth-Token": ARSENAL_API_KEY } }
-    );
+    const res = await fetch("/api/arsenal-matches");
     if (!res.ok) throw new Error(`API ${res.status}`);
     const json = await res.json();
     const matches = (json.matches || []).map(m => ({
@@ -223,7 +218,7 @@ const fetchArsenalMatches = async () => {
       home: m.homeTeam?.shortName || m.homeTeam?.name || "Home",
       away: m.awayTeam?.shortName || m.awayTeam?.name || "Away",
       competition: m.competition?.name || "",
-      isHome: m.homeTeam?.id === ARSENAL_TEAM_ID,
+      isHome: m.homeTeam?.id === 57,
     }));
     localStorage.setItem(MATCH_CACHE_KEY, JSON.stringify({ data: matches, ts: Date.now() }));
     return matches;
