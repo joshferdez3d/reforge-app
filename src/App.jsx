@@ -258,6 +258,8 @@ export default function Reforge() {
   const [phaseDetail, setPhaseDetail] = useState(null);
   const [partnerName, setPartnerName] = useState("Mrunali");
   const [setupName, setSetupName] = useState("");
+  const [setupStartWeight, setSetupStartWeight] = useState("");
+  const [setupTargetWeight, setSetupTargetWeight] = useState("");
   const [startDateInput, setStartDateInput] = useState("");
 
   const [nData, setNData] = useState({ startDate: null, startWeight: 100, targetWeight: 78, weightLog: [], checkins: {}, streak: 0, bestStreak: 0, cravingsHandled: {}, matchNightPrepped: {} });
@@ -406,7 +408,7 @@ export default function Reforge() {
         <p style={{ fontSize: 15, color: "#777", lineHeight: 1.7, maxWidth: 340, marginBottom: 32 }}>
           {isP ? "No intense workouts. No overwhelm. Steps you already love, with gentle strength woven in. Your cycle guiding the way." : "No noise. No overwhelm. Just a clear plan, one day at a time."}
         </p>
-        {isP && !pData.startWeight && (
+        {isP && (
           <div style={{ width: "100%", maxWidth: 320, marginBottom: 24 }}>
             <div style={{ marginBottom: 16 }}>
               <div style={{ ...lbl, textAlign: "left" }}>Name</div>
@@ -415,11 +417,11 @@ export default function Reforge() {
             <div style={{ display: "flex", gap: 12 }}>
               <div style={{ flex: 1 }}>
                 <div style={{ ...lbl, textAlign: "left" }}>Current kg</div>
-                <input style={inp} type="number" placeholder="e.g. 70" onChange={e => setPData(p => ({ ...p, startWeight: parseFloat(e.target.value) || null }))} />
+                <input style={inp} type="number" step="0.1" placeholder="e.g. 70" value={setupStartWeight} onChange={e => setSetupStartWeight(e.target.value)} />
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ ...lbl, textAlign: "left" }}>Target kg</div>
-                <input style={inp} type="number" placeholder="e.g. 58" onChange={e => setPData(p => ({ ...p, targetWeight: parseFloat(e.target.value) || null }))} />
+                <input style={inp} type="number" step="0.1" placeholder="e.g. 58" value={setupTargetWeight} onChange={e => setSetupTargetWeight(e.target.value)} />
               </div>
             </div>
           </div>
@@ -429,7 +431,18 @@ export default function Reforge() {
           <input style={{ ...inp, colorScheme: "dark" }} type="date" value={startDateInput || today} onChange={e => setStartDateInput(e.target.value)} />
           <p style={{ fontSize: 11, color: "#555", marginTop: 6, textAlign: "left" }}>Set to tomorrow if you want to start fresh</p>
         </div>
-        <button style={{ ...btn, maxWidth: 320 }} onClick={() => { if (isP && setupName.trim()) setPartnerName(setupName.trim()); setData(p => ({ ...p, startDate: startDateInput || today })); setStartDateInput(""); }}>
+        <button style={{ ...btn, maxWidth: 320 }} onClick={() => {
+          if (isP && setupName.trim()) setPartnerName(setupName.trim());
+          if (isP) {
+            const sw = parseFloat(setupStartWeight) || null;
+            const tw = parseFloat(setupTargetWeight) || null;
+            setPData(p => ({ ...p, startWeight: sw || p.startWeight, targetWeight: tw || p.targetWeight, startDate: startDateInput || today }));
+            setSetupStartWeight(""); setSetupTargetWeight("");
+          } else {
+            setData(p => ({ ...p, startDate: startDateInput || today }));
+          }
+          setStartDateInput("");
+        }}>
           Begin the Journey <ArrowRight size={16} style={{ marginLeft: 6, verticalAlign: "middle" }} />
         </button>
         <div style={{ marginTop: 40, display: "flex", gap: 3, background: "rgba(255,255,255,0.04)", borderRadius: 20, padding: 3 }}>
