@@ -153,6 +153,58 @@ const MILESTONES_NISHANT = [
   { kg: 78, label: "Goal Reached!", emoji: "👑" },
 ];
 
+// ─── CRAVINGS TOOLKIT ────────────────────────────────────────────────────────
+const CRAVING_TRIGGERS = [
+  {
+    id: "post-meal",
+    label: "Post-Meal Sweet",
+    time: "After meals",
+    emoji: "🍫",
+    color: "#a78bfa",
+    swaps: [
+      ["Medjool date", "70%+ dark chocolate square", "Spoon of peanut butter", "Brush teeth after eating"],
+      ["Medjool date", "Dark chocolate square", "Small fruit"],
+      ["Small fruit", "Herbal tea", "Brush teeth right after"],
+      ["Herbal tea", "Wait 10 min — it passes"],
+    ],
+    tip: "Meals with enough protein & fat reduce the spike/crash cycle. Cravings pass in ~10 min if you give them something small.",
+  },
+  {
+    id: "afternoon",
+    label: "4–5pm Snack Attack",
+    time: "4–5pm",
+    emoji: "⏰",
+    color: "#f59e0b",
+    swaps: [
+      ["Roasted makhana", "Handful of almonds", "Fruit with peanut butter", "Greek yogurt"],
+      ["Greek yogurt", "Protein shake", "Handful of nuts"],
+      ["Handful of nuts", "Black coffee", "Small fruit"],
+      ["Planned mini-meal", "Green tea"],
+    ],
+    tip: "Usually means lunch lacked protein. A planned 4pm snack is smart — stops you overeating at dinner. Pre-portion on Sunday.",
+  },
+  {
+    id: "match-night",
+    label: "Arsenal Night",
+    time: "1:30am",
+    emoji: "⚽",
+    color: "#ef4444",
+    swaps: [
+      ["Air-fried chicken strips", "Roasted chana", "Nuts + cucumber chaat masala"],
+      ["Chicken strips", "Cucumber chaat masala", "Roasted makhana"],
+      ["Protein shake", "Small nut box", "Cucumber sticks"],
+      ["Pre-made protein snack box", "Green tea"],
+    ],
+    tip: "Prep match snacks BEFORE dinner. The worst move is ordering food at 1am — that's where the real damage happens.",
+  },
+];
+
+// Arsenal likely match days (IST late-night = UK evening kickoffs)
+const isLikelyMatchDay = () => {
+  const day = new Date().getDay();
+  return day === 6 || day === 0 || day === 2 || day === 3; // Sat, Sun, Tue, Wed
+};
+
 const QUOTES = [
   "The best time to start was yesterday. The second best time is now.",
   "You don't have to be extreme, just consistent.",
@@ -208,7 +260,7 @@ export default function Reforge() {
   const [setupName, setSetupName] = useState("");
   const [startDateInput, setStartDateInput] = useState("");
 
-  const [nData, setNData] = useState({ startDate: null, startWeight: 100, targetWeight: 78, weightLog: [], checkins: {}, streak: 0, bestStreak: 0 });
+  const [nData, setNData] = useState({ startDate: null, startWeight: 100, targetWeight: 78, weightLog: [], checkins: {}, streak: 0, bestStreak: 0, cravingsHandled: {}, matchNightPrepped: {} });
   const [pData, setPData] = useState({ startDate: null, startWeight: null, targetWeight: null, weightLog: [], checkins: {}, streak: 0, bestStreak: 0, lastPeriod: null, fizzyLog: [] });
 
   const [showFizzyModal, setShowFizzyModal] = useState(false);
@@ -249,6 +301,12 @@ export default function Reforge() {
   const toM = nextM ? (latestW - nextM.kg).toFixed(1) : 0;
   const hasSteps = isP && todayPlan?.type === "steps";
   const ckKeys = hasSteps ? ["exercise", "steps", "nutrition", "water"] : ["exercise", "nutrition", "water"];
+
+  // Cravings derived
+  const todayCravingsHandled = (!isP && nData.cravingsHandled) ? (nData.cravingsHandled[today] || []) : [];
+  const totalCravingsHandled = (!isP && nData.cravingsHandled) ? Object.values(nData.cravingsHandled).reduce((sum, arr) => sum + (Array.isArray(arr) ? arr.length : 0), 0) : 0;
+  const matchNightPreppedToday = !isP && nData.matchNightPrepped ? !!nData.matchNightPrepped[today] : false;
+  const showMatchNightCard = !isP && (isLikelyMatchDay() || matchNightPreppedToday);
 
   // Fizzy drink tracking
   const fizzyMax = isP ? FIZZY_ALLOWANCE[phIdx] || 1 : 0;
@@ -292,8 +350,26 @@ export default function Reforge() {
     }
   };
 
+  // Cravings actions
+  const toggleCraving = (triggerId) => {
+    if (isP) return;
+    const handled = nData.cravingsHandled || {};
+    const todayHandled = handled[today] || [];
+    const alreadyHandled = todayHandled.includes(triggerId);
+    const updated = alreadyHandled ? todayHandled.filter(id => id !== triggerId) : [...todayHandled, triggerId];
+    setNData(p => ({ ...p, cravingsHandled: { ...(p.cravingsHandled || {}), [today]: updated } }));
+    if (!alreadyHandled) { setCelebration("Craving handled! 💪"); setTimeout(() => setCelebration(null), 2000); }
+  };
+
+  const toggleMatchPrep = () => {
+    if (isP) return;
+    const isPrepped = (nData.matchNightPrepped || {})[today];
+    setNData(p => ({ ...p, matchNightPrepped: { ...(p.matchNightPrepped || {}), [today]: !isPrepped } }));
+    if (!isPrepped) { setCelebration("Match snacks prepped! ⚽"); setTimeout(() => setCelebration(null), 2000); }
+  };
+
   const switchU = (u) => { setAnimIn(false); setTimeout(() => { setActiveUser(u); setActiveTab("today"); setAnimIn(true); }, 200); };
-  const resetD = () => { if (confirm("Reset all data? Cannot be undone.")) { if (!isP) setNData({ startDate: null, startWeight: 100, targetWeight: 78, weightLog: [], checkins: {}, streak: 0, bestStreak: 0 }); else setPData({ startDate: null, startWeight: null, targetWeight: null, weightLog: [], checkins: {}, streak: 0, bestStreak: 0, lastPeriod: null, fizzyLog: [] }); } };
+  const resetD = () => { if (confirm("Reset all data? Cannot be undone.")) { if (!isP) setNData({ startDate: null, startWeight: 100, targetWeight: 78, weightLog: [], checkins: {}, streak: 0, bestStreak: 0, cravingsHandled: {}, matchNightPrepped: {} }); else setPData({ startDate: null, startWeight: null, targetWeight: null, weightLog: [], checkins: {}, streak: 0, bestStreak: 0, lastPeriod: null, fizzyLog: [] }); } };
 
   // Theme
   const A = isP ? { p: "#e879a8", s: "#c084fc", g: "rgba(232,121,168,0.1)", gr: "linear-gradient(135deg,#e879a8,#c084fc)" } : { p: "#f59e0b", s: "#f97316", g: "rgba(245,158,11,0.1)", gr: "linear-gradient(135deg,#f59e0b,#f97316)" };
@@ -499,6 +575,90 @@ export default function Reforge() {
               </div>
             ))}
           </div>
+
+          {/* Cravings Toolkit (Nishant only) */}
+          {!isP && data.startDate && !notStartedYet && (
+            <div style={{ marginTop: 20 }}>
+              <div style={lbl}>CRAVINGS TOOLKIT · {totalCravingsHandled} handled</div>
+
+              {/* Match Night Prep Card */}
+              {showMatchNightCard && !matchNightPreppedToday && (
+                <div style={{ ...card, marginTop: 0, borderColor: "#ef444425", background: "linear-gradient(135deg,rgba(239,68,68,0.06),rgba(239,68,68,0.02))" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                    <span style={{ fontSize: 22 }}>⚽</span>
+                    <div>
+                      <div style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>Match Night Prep</div>
+                      <div style={{ fontSize: 12, color: "#888" }}>Arsenal might play tonight — prep your snacks!</div>
+                    </div>
+                  </div>
+                  <div style={{ padding: "12px 14px", background: "rgba(0,0,0,0.2)", borderRadius: 10, marginBottom: 12 }}>
+                    <p style={{ fontSize: 13, color: "#bbb", margin: 0, lineHeight: 1.7 }}>
+                      Before dinner, get these ready: {(CRAVING_TRIGGERS[2].swaps[phIdx] || CRAVING_TRIGGERS[2].swaps[3]).join(", ")}
+                    </p>
+                  </div>
+                  <button onClick={toggleMatchPrep} style={{ background: "rgba(239,68,68,0.1)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer", width: "100%", fontFamily: "inherit" }}>
+                    I've prepped my match snacks
+                  </button>
+                </div>
+              )}
+              {showMatchNightCard && matchNightPreppedToday && (
+                <div style={{ ...card, marginTop: 0, borderColor: "#10b98125", background: "rgba(16,185,129,0.04)" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{ fontSize: 18 }}>⚽</span>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 14, fontWeight: 600, color: "#10b981" }}>Match snacks prepped!</div>
+                      <div style={{ fontSize: 12, color: "#666" }}>No 1am Zomato tonight. You've got this.</div>
+                    </div>
+                    <Check size={18} color="#10b981" />
+                  </div>
+                </div>
+              )}
+
+              {/* Craving Trigger Cards */}
+              {CRAVING_TRIGGERS.map(trigger => {
+                const handled = todayCravingsHandled.includes(trigger.id);
+                const swaps = trigger.swaps[phIdx] || trigger.swaps[3];
+                return (
+                  <div key={trigger.id} style={{ ...card, borderColor: handled ? `${trigger.color}25` : "rgba(255,255,255,0.05)", background: handled ? `${trigger.color}06` : "rgba(255,255,255,0.03)" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <span style={{ fontSize: 20 }}>{trigger.emoji}</span>
+                        <div>
+                          <div style={{ fontSize: 14, fontWeight: 600, color: "#ddd" }}>{trigger.label}</div>
+                          <div style={{ fontSize: 11, color: "#666" }}>{trigger.time}</div>
+                        </div>
+                      </div>
+                      {handled && <span style={tag("#10b981")}>handled</span>}
+                    </div>
+                    <div style={{ padding: "10px 14px", background: "rgba(0,0,0,0.15)", borderRadius: 10, marginBottom: 10 }}>
+                      <p style={{ fontSize: 12, color: "#777", margin: "0 0 6px", fontWeight: 600 }}>Smart swaps (Phase {phIdx + 1})</p>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                        {swaps.map((swap, i) => (
+                          <span key={i} style={{ fontSize: 12, color: "#bbb", padding: "4px 10px", background: `${trigger.color}10`, borderRadius: 8, border: `1px solid ${trigger.color}15` }}>{swap}</span>
+                        ))}
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 10 }}>
+                      <Star size={12} color={trigger.color} style={{ marginTop: 2, flexShrink: 0 }} />
+                      <p style={{ fontSize: 12, color: "#777", margin: 0, lineHeight: 1.5, fontStyle: "italic" }}>{trigger.tip}</p>
+                    </div>
+                    <button
+                      onClick={() => toggleCraving(trigger.id)}
+                      style={{
+                        background: handled ? `${trigger.color}10` : "rgba(255,255,255,0.05)",
+                        color: handled ? trigger.color : "#ddd",
+                        border: `1px solid ${handled ? `${trigger.color}30` : "rgba(255,255,255,0.08)"}`,
+                        borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 600,
+                        cursor: "pointer", width: "100%", fontFamily: "inherit", transition: "all 0.2s",
+                      }}
+                    >
+                      {handled ? "Handled — nice work!" : "Mark as handled"}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
           {/* Fizzy Drink Budget (Mrunali only) */}
           {isP && data.startDate && (
