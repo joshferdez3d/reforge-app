@@ -145,11 +145,11 @@ const FIZZY_EMPTY_MSGS = [
 ];
 
 const MILESTONES_NISHANT = [
-  { kg: 97, label: "First 3kg Down!", emoji: "🔥" },
-  { kg: 95, label: "5kg Gone!", emoji: "💪" },
-  { kg: 90, label: "10kg Milestone!", emoji: "⭐" },
+  { kg: 100, label: "First 3kg Down!", emoji: "🔥" },
+  { kg: 95, label: "Under 95!", emoji: "💪" },
+  { kg: 90, label: "10kg+ Gone!", emoji: "⭐" },
   { kg: 85, label: "Wedding Weight!", emoji: "🏆" },
-  { kg: 80, label: "20kg Transformed!", emoji: "🚀" },
+  { kg: 80, label: "20kg+ Transformed!", emoji: "🚀" },
   { kg: 78, label: "Goal Reached!", emoji: "👑" },
 ];
 
@@ -323,7 +323,10 @@ export default function Reforge() {
   const [pData, setPData] = useState({ startDate: null, startWeight: null, targetWeight: null, weightLog: [], checkins: {}, streak: 0, bestStreak: 0, lastPeriod: null, fizzyLog: [] });
 
   const [showFizzyModal, setShowFizzyModal] = useState(false);
-  const [arsenalMatches, setArsenalMatches] = useState(null);
+  const [arsenalMatches, setArsenalMatches] = useState(() => {
+    try { const c = localStorage.getItem(MATCH_CACHE_KEY); if (c) return JSON.parse(c).data; } catch (_) {}
+    return null;
+  });
 
   const isP = activeUser === "partner";
   const data = isP ? pData : nData;
