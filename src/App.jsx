@@ -1171,7 +1171,7 @@ Fizzy drink budget: ${FIZZY_ALLOWANCE[phIdx]} per week this phase.`;
 
         {activeTab === "today" && <Today />}
         {activeTab === "plan" && <Plan />}
-        {activeTab === "ask" && <Ask />}
+        {activeTab === "ask" && Ask()}
         {activeTab === "progress" && <Progress />}
       </div>
 
