@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
-import { Check, ChevronRight, Flame, Target, TrendingDown, Dumbbell, Droplets, Moon, Sun, Heart, Calendar, ArrowRight, User, RotateCcw, Award, Zap, Coffee, Salad, X, Star, Clock, Activity, Footprints, Wind } from "lucide-react";
+import { Check, ChevronRight, Flame, Target, TrendingDown, Dumbbell, Droplets, Moon, Sun, Heart, Calendar, ArrowRight, User, RotateCcw, Award, Zap, Coffee, Salad, X, Star, Clock, Activity, Footprints, Wind, MessageCircle, Send } from "lucide-react";
 
 // ─── NISHANT'S PLAN ───────────────────────────────────────────────────────────
 const PHASES_NISHANT = [
@@ -323,6 +323,11 @@ export default function Reforge() {
     return null;
   });
 
+  const [chatMsgs, setChatMsgs] = useState([]);
+  const [chatInput, setChatInput] = useState("");
+  const [chatLoading, setChatLoading] = useState(false);
+  const chatRef = useRef(null);
+
   const isP = activeUser === "partner";
   const data = isP ? pData : nData;
   const setData = isP ? setPData : setNData;
@@ -344,6 +349,16 @@ export default function Reforge() {
   useEffect(() => {
     if (loaded) fetchArsenalMatches().then(m => { if (m) setArsenalMatches(m); });
   }, [loaded]);
+
+  // Load chat messages when switching users
+  useEffect(() => {
+    try { const c = localStorage.getItem(`rf2-chat-${isP ? "p" : "n"}`); setChatMsgs(c ? JSON.parse(c) : []); } catch (_) { setChatMsgs([]); }
+  }, [activeUser]);
+
+  // Auto-scroll chat
+  useEffect(() => {
+    if (chatRef.current) chatRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [chatMsgs, chatLoading]);
 
   // Derived
   const today = getToday();
@@ -431,6 +446,58 @@ export default function Reforge() {
     const isPrepped = (nData.matchNightPrepped || {})[today];
     setNData(p => ({ ...p, matchNightPrepped: { ...(p.matchNightPrepped || {}), [today]: !isPrepped } }));
     if (!isPrepped) { setCelebration("Match snacks prepped! ⚽"); setTimeout(() => setCelebration(null), 2000); }
+  };
+
+  // Chat
+  const buildSystemPrompt = () => {
+    const p = phase;
+    const base = `You are the Reforge coach — a concise, practical nutrition and fitness advisor. You're chatting with ${isP ? partnerName : "Nishant"} inside their health app.
+
+RULES:
+- 2-4 sentences max unless they ask for detail
+- No guilt, no lectures. Systems over willpower.
+- Don't just say yes/no to food questions — suggest the smart version
+- Indian food context (dal, roti, rice, sabzi, chai are normal)
+- Reference their current phase rules when relevant
+- Be warm but direct. Like a friend who knows what they're doing.`;
+    if (!isP) {
+      return `${base}
+
+NISHANT: Male, 103.2kg start, ${latestW}kg now, target 78kg. Phase ${phIdx + 1}: ${p.name} (Weeks ${p.weeks}).
+Nutrition: ${p.nutrition.join(" | ")}
+Craving triggers: Post-meal sweets (use dark chocolate, dates, PB), 4-5pm snacking (makhana, almonds, yogurt), Arsenal 1:30am match nights (prep snacks before dinner — NEVER order at 1am).`;
+    } else {
+      return `${base}
+
+${partnerName}: Female, steps-first gentle plan. Phase ${phIdx + 1}: ${p.name} (Weeks ${p.weeks}).
+Nutrition: ${p.nutrition.join(" | ")}
+Has cycle tracking. Cravings around periods are hormonal — normalize them. Suggest magnesium foods (nuts, bananas, dark chocolate).
+Fizzy drink budget: ${FIZZY_ALLOWANCE[phIdx]} per week this phase.`;
+    }
+  };
+
+  const sendChat = async (msg) => {
+    if (!msg.trim() || chatLoading) return;
+    const userMsg = { role: "user", content: msg.trim() };
+    const updated = [...chatMsgs, userMsg];
+    setChatMsgs(updated);
+    setChatInput("");
+    setChatLoading(true);
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ systemPrompt: buildSystemPrompt(), messages: updated.slice(-10) }),
+      });
+      const data = await res.json();
+      const botMsg = { role: "assistant", content: data.reply || data.error || "Something went wrong." };
+      const final = [...updated, botMsg];
+      setChatMsgs(final);
+      try { localStorage.setItem(`rf2-chat-${isP ? "p" : "n"}`, JSON.stringify(final.slice(-50))); } catch (_) {}
+    } catch (e) {
+      setChatMsgs([...updated, { role: "assistant", content: "Couldn't connect. Check your internet and try again." }]);
+    }
+    setChatLoading(false);
   };
 
   const switchU = (u) => { setAnimIn(false); setTimeout(() => { setActiveUser(u); setActiveTab("today"); setAnimIn(true); }, 200); };
@@ -986,6 +1053,105 @@ export default function Reforge() {
     );
   };
 
+  // ─── ASK (CHAT) ─────────────────────────────────────────────────────────
+  const Ask = () => (
+    <>
+      <div style={{ marginTop: 20, marginBottom: 16 }}>
+        <h1 style={{ fontSize: 22, fontWeight: 800, fontFamily: "'Outfit',sans-serif", color: "#fff", margin: 0 }}>Ask Reforge</h1>
+        <p style={{ fontSize: 13, color: "#666", marginTop: 4, marginBottom: 0 }}>Nutrition & fitness guidance for {isP ? partnerName : "Nishant"}</p>
+      </div>
+
+      {/* Quick suggestions when empty */}
+      {chatMsgs.length === 0 && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
+          {[
+            "Can I have rice at dinner?",
+            "I'm craving something sweet",
+            "What should I snack on right now?",
+            isP ? "I'm on my period — what should I eat?" : "Good pre-workout snack?",
+            isP ? "Is chai with sugar okay?" : "Is it okay to skip a workout today?",
+            "What can I eat late at night?",
+          ].map((q, i) => (
+            <button key={i} onClick={() => sendChat(q)} style={{
+              background: `${A.p}0a`, border: `1px solid ${A.p}20`, borderRadius: 20,
+              padding: "8px 14px", fontSize: 12, color: A.p, cursor: "pointer",
+              fontFamily: "inherit", fontWeight: 500, textAlign: "left",
+            }}>{q}</button>
+          ))}
+        </div>
+      )}
+
+      {/* Messages */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 12, paddingBottom: 80 }}>
+        {chatMsgs.map((m, i) => (
+          <div key={i} style={{
+            alignSelf: m.role === "user" ? "flex-end" : "flex-start",
+            maxWidth: "85%",
+            padding: "12px 16px",
+            borderRadius: m.role === "user" ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
+            background: m.role === "user" ? A.gr : "rgba(255,255,255,0.05)",
+            color: m.role === "user" ? "#0a0c13" : "#ddd",
+            fontSize: 14, lineHeight: 1.6,
+            fontWeight: m.role === "user" ? 600 : 400,
+            whiteSpace: "pre-wrap",
+          }}>
+            {m.content}
+          </div>
+        ))}
+        {chatLoading && (
+          <div style={{
+            alignSelf: "flex-start", padding: "12px 20px",
+            borderRadius: "16px 16px 16px 4px", background: "rgba(255,255,255,0.05)",
+          }}>
+            <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+              {[0, 1, 2].map(i => (
+                <div key={i} style={{
+                  width: 7, height: 7, borderRadius: "50%", background: A.p,
+                  animation: `dotPulse 1.2s infinite`, animationDelay: `${i * 0.15}s`, opacity: 0.4,
+                }} />
+              ))}
+            </div>
+          </div>
+        )}
+        <div ref={chatRef} />
+      </div>
+
+      {/* Clear chat */}
+      {chatMsgs.length > 2 && (
+        <div style={{ textAlign: "center", paddingBottom: 80 }}>
+          <button onClick={() => { setChatMsgs([]); localStorage.removeItem(`rf2-chat-${isP ? "p" : "n"}`); }} style={{
+            background: "none", border: "none", color: "#333", fontSize: 12, cursor: "pointer", fontFamily: "inherit",
+          }}>Clear chat</button>
+        </div>
+      )}
+
+      {/* Chat input bar */}
+      <div style={{
+        position: "fixed", bottom: 68, left: 0, right: 0, padding: "10px 20px",
+        background: "rgba(10,12,19,0.96)", backdropFilter: "blur(20px)",
+        borderTop: "1px solid rgba(255,255,255,0.05)", zIndex: 50,
+      }}>
+        <div style={{ maxWidth: 480, margin: "0 auto", display: "flex", gap: 10 }}>
+          <input
+            style={{ ...inp, flex: 1, borderRadius: 24, padding: "12px 18px", fontSize: 14 }}
+            placeholder="Ask about food, exercise, cravings..."
+            value={chatInput}
+            onChange={e => setChatInput(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && sendChat(chatInput)}
+          />
+          <button onClick={() => sendChat(chatInput)} disabled={chatLoading} style={{
+            width: 46, height: 46, borderRadius: "50%", border: "none",
+            background: chatInput.trim() && !chatLoading ? A.gr : "rgba(255,255,255,0.05)",
+            cursor: chatInput.trim() && !chatLoading ? "pointer" : "default",
+            display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+          }}>
+            <Send size={18} color={chatInput.trim() && !chatLoading ? "#0a0c13" : "#444"} />
+          </button>
+        </div>
+      </div>
+    </>
+  );
+
   // ─── MAIN RENDER ──────────────────────────────────────────────────────────
   return (
     <div style={{ minHeight: "100vh", background: "#0a0c13", color: "#e2e4ea", fontFamily: "'DM Sans',sans-serif", position: "relative", overflow: "hidden" }}>
@@ -1005,13 +1171,14 @@ export default function Reforge() {
 
         {activeTab === "today" && <Today />}
         {activeTab === "plan" && <Plan />}
+        {activeTab === "ask" && <Ask />}
         {activeTab === "progress" && <Progress />}
       </div>
 
       {/* Nav */}
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, background: "rgba(10,12,19,0.94)", backdropFilter: "blur(20px)", borderTop: "1px solid rgba(255,255,255,0.05)", display: "flex", justifyContent: "center", gap: 8, padding: "10px 20px", paddingBottom: "max(10px,env(safe-area-inset-bottom))", zIndex: 100 }}>
-        {[{ t: "today", i: <Flame size={20} />, l: "TODAY" }, { t: "plan", i: <Calendar size={20} />, l: "PLAN" }, { t: "progress", i: <TrendingDown size={20} />, l: "PROGRESS" }].map(n => (
-          <button key={n.t} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "8px 18px", borderRadius: 12, border: "none", background: activeTab === n.t ? `${A.p}15` : "transparent", color: activeTab === n.t ? A.p : "#444", cursor: "pointer", fontSize: 10, fontWeight: 600, fontFamily: "inherit", letterSpacing: "0.3px" }} onClick={() => setActiveTab(n.t)}>{n.i}{n.l}</button>
+        {[{ t: "today", i: <Flame size={20} />, l: "TODAY" }, { t: "plan", i: <Calendar size={20} />, l: "PLAN" }, { t: "ask", i: <MessageCircle size={20} />, l: "ASK" }, { t: "progress", i: <TrendingDown size={20} />, l: "PROGRESS" }].map(n => (
+          <button key={n.t} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "8px 14px", borderRadius: 12, border: "none", background: activeTab === n.t ? `${A.p}15` : "transparent", color: activeTab === n.t ? A.p : "#444", cursor: "pointer", fontSize: 10, fontWeight: 600, fontFamily: "inherit", letterSpacing: "0.3px" }} onClick={() => setActiveTab(n.t)}>{n.i}{n.l}</button>
         ))}
       </div>
 
@@ -1103,6 +1270,7 @@ export default function Reforge() {
 
       <style>{`
         @keyframes cp{0%{transform:translate(-50%,-50%) scale(.7);opacity:0}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
+        @keyframes dotPulse{0%,100%{opacity:0.3;transform:scale(0.8)}50%{opacity:1;transform:scale(1.2)}}
         *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
         body{margin:0;background:#0a0c13}
         input:focus{border-color:${A.p}55 !important}
