@@ -89,8 +89,8 @@ export default function Reforge() {
       startDate: nData.startDate, startWeight: nData.startWeight || 103.2,
       targetWeight: nData.targetWeight || 78, weightLog: nData.weightLog || [],
       checkins: nData.checkins || {}, streak: nData.streak || 0,
-      bestStreak: nData.bestStreak || 0, cravingsHandled: nData.cravingsHandled || {},
-      lateNightPrepped: nData.matchNightPrepped || {}, guiltyPleasureLog: [],
+      bestStreak: nData.bestStreak || 0, cravingsHandled: Array.isArray(nData.cravingsHandled) ? nData.cravingsHandled : [],
+      lateNightPrepped: Array.isArray(nData.matchNightPrepped) ? nData.matchNightPrepped : [], guiltyPleasureLog: [],
       lastPeriod: null,
       grow: { avoidanceLog: [], microCompletions: {}, visibilityLevel: 0, visibilityLog: [], screenTimeLog: {}, screenTimeDailyGoal: 60, weeklyPlan: { create: 2, finish: 1, share: 1, movement: 3 } },
     };
@@ -113,8 +113,8 @@ export default function Reforge() {
       startDate: pData.startDate, startWeight: pData.startWeight,
       targetWeight: pData.targetWeight, weightLog: pData.weightLog || [],
       checkins: pData.checkins || {}, streak: pData.streak || 0,
-      bestStreak: pData.bestStreak || 0, cravingsHandled: {},
-      lateNightPrepped: {}, guiltyPleasureLog: pData.fizzyLog || [],
+      bestStreak: pData.bestStreak || 0, cravingsHandled: [],
+      lateNightPrepped: [], guiltyPleasureLog: pData.fizzyLog || [],
       lastPeriod: pData.lastPeriod || null,
       grow: { avoidanceLog: [], microCompletions: {}, visibilityLevel: 0, visibilityLog: [], screenTimeLog: {}, screenTimeDailyGoal: 60, weeklyPlan: { create: 2, finish: 1, share: 1, movement: 3 } },
     };
@@ -132,7 +132,7 @@ export default function Reforge() {
       arsenalTracking: false, plan: null,
       startDate: null, startWeight: null, targetWeight: null,
       weightLog: [], checkins: {}, streak: 0, bestStreak: 0,
-      cravingsHandled: {}, lateNightPrepped: {}, guiltyPleasureLog: [], lastPeriod: null,
+      cravingsHandled: [], lateNightPrepped: [], guiltyPleasureLog: [], lastPeriod: null,
       grow: { avoidanceLog: [], microCompletions: {}, visibilityLevel: 0, visibilityLog: [], screenTimeLog: {}, screenTimeDailyGoal: 60, weeklyPlan: { create: 2, finish: 1, share: 1, movement: 3 } },
     };
     try {
@@ -172,7 +172,7 @@ export default function Reforge() {
   const cPh = CYCLE_PHASES[cPhIdx];
   const arsenalSoon = userData?.arsenalTracking ? getNextMatchSoon(arsenalMatches) : null;
   const arsenalNext = userData?.arsenalTracking ? getUpcomingMatch(arsenalMatches) : null;
-  const showMatchNightCard = userData?.arsenalTracking && (arsenalSoon !== null || (userData.lateNightPrepped?.[today]));
+  const showMatchNightCard = userData?.arsenalTracking && (arsenalSoon !== null || (userData.lateNightPrepped || []).includes(today));
   const notStartedYet = userData?.startDate ? new Date(today) < new Date(userData.startDate) : false;
   const daysUntilStart = notStartedYet ? Math.ceil((new Date(userData.startDate) - new Date(today)) / (24*60*60*1000)) : 0;
 

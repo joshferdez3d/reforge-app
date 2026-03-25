@@ -24,9 +24,14 @@ export default function Today(props) {
   };
 
   const toggleCi = (key) => {
-    const updated = { ...userData };
-    if (!updated.checkin) updated.checkin = {};
-    updated.checkin[key] = !updated.checkin[key];
+    const todayCheckin = userData.checkins?.[today] || {};
+    const updated = {
+      ...userData,
+      checkins: {
+        ...userData.checkins,
+        [today]: { ...todayCheckin, [key]: !todayCheckin[key] }
+      }
+    };
     setUserData(updated);
     showCelebration(`✨ ${key} marked!`);
   };
