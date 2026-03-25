@@ -2,20 +2,62 @@ import React, { useState, useEffect } from "react";
 import { Flame, Calendar, TrendingDown, MessageCircle, Sprout, ArrowRight, X, User, ChevronRight, Droplets, Footprints, Heart } from "lucide-react";
 import { EXERCISE_TEMPLATES, THEME_COLORS, TYPE_COLORS, NISHANT_CRAVING_TRIGGERS, PHASES_AGGRESSIVE, PHASES_GENTLE, FIZZY_DRINKS, FIZZY_ALLOWANCE, MATCH_CACHE_KEY, fetchArsenalMatches, getNextMatchSoon, getUpcomingMatch, formatMatchTimeIST, CYCLE_PHASES, QUOTES } from "./constants";
 import { getToday, getDayName, getWeekNumber, getPhaseIdx, getCycleDay, getCyclePhaseIdx, getWeekStart } from "./helpers";
-import Questionnaire from "./Questionnaire";
 import Today from "./tabs/Today";
 import PlanView from "./tabs/PlanView";
 import Progress from "./tabs/Progress";
 import Ask from "./tabs/Ask";
 import Grow from "./tabs/Grow";
 
+// ─── HARDCODED USER PROFILES ────────────────────────────────────────────────
+const createNishantProfile = (existingData) => ({
+  name: "Nishant", gender: "male", dietPref: "non-veg", themeColor: "orange",
+  enableCycleTracking: false, arsenalTracking: true,
+  plan: {
+    exerciseTemplate: "aggressive",
+    cravingTriggers: NISHANT_CRAVING_TRIGGERS,
+    nutritionByPhase: PHASES_AGGRESSIVE.map(p => p.nutrition),
+    guiltyPleasure: null, lateNightEvent: null,
+  },
+  startDate: existingData?.startDate || null,
+  startWeight: existingData?.startWeight || null,
+  targetWeight: existingData?.targetWeight || null,
+  weightLog: existingData?.weightLog || [],
+  checkins: existingData?.checkins || {}, streak: existingData?.streak || 0,
+  bestStreak: existingData?.bestStreak || 0,
+  cravingsHandled: Array.isArray(existingData?.cravingsHandled) ? existingData.cravingsHandled : [],
+  lateNightPrepped: Array.isArray(existingData?.matchNightPrepped || existingData?.lateNightPrepped) ? (existingData.lateNightPrepped || existingData.matchNightPrepped) : [],
+  guiltyPleasureLog: [],
+  lastPeriod: null,
+  grow: existingData?.grow || { avoidanceLog: [], microCompletions: {}, visibilityLevel: 0, visibilityLog: [], screenTimeLog: {}, screenTimeDailyGoal: 60, weeklyPlan: { create: 2, finish: 1, share: 1, movement: 3 } },
+});
+
+const createMrunaliProfile = (existingData) => ({
+  name: "Mrunali", gender: "female", dietPref: "non-veg", themeColor: "pink",
+  enableCycleTracking: true, arsenalTracking: false,
+  plan: {
+    exerciseTemplate: "gentle",
+    cravingTriggers: [],
+    nutritionByPhase: PHASES_GENTLE.map(p => p.nutrition),
+    guiltyPleasure: { name: "Fizzy Drinks", items: FIZZY_DRINKS, weeklyAllowance: FIZZY_ALLOWANCE },
+    lateNightEvent: null,
+  },
+  startDate: existingData?.startDate || null,
+  startWeight: existingData?.startWeight || null,
+  targetWeight: existingData?.targetWeight || null,
+  weightLog: existingData?.weightLog || [],
+  checkins: existingData?.checkins || {}, streak: existingData?.streak || 0,
+  bestStreak: existingData?.bestStreak || 0,
+  cravingsHandled: [],
+  lateNightPrepped: [],
+  guiltyPleasureLog: existingData?.fizzyLog || existingData?.guiltyPleasureLog || [],
+  lastPeriod: existingData?.lastPeriod || null,
+  grow: existingData?.grow || { avoidanceLog: [], microCompletions: {}, visibilityLevel: 0, visibilityLog: [], screenTimeLog: {}, screenTimeDailyGoal: 60, weeklyPlan: { create: 2, finish: 1, share: 1, movement: 3 } },
+});
+
 export default function Reforge() {
   // ─── STATE ────────────────────────────────────────────────────────────────
   const [loaded, setLoaded] = useState(false);
   const [userData, setUserData] = useState(null);
-  const [migrationNeeded, setMigrationNeeded] = useState(false);
-  const [migrationNames, setMigrationNames] = useState({ n: "Nishant", p: "Partner" });
-  const [planLoading, setPlanLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("today");
   const [showWeightModal, setShowWeightModal] = useState(false);
   const [showCycleModal, setShowCycleModal] = useState(false);
@@ -44,16 +86,13 @@ export default function Reforge() {
       // Check for migration from old format
       const oldN = localStorage.getItem("rf2-n");
       const oldP = localStorage.getItem("rf2-p");
-      if (oldN || oldP) {
-        const pName = localStorage.getItem("rf2-pn") || "Partner";
-        setMigrationNames({ n: "Nishant", p: pName });
-        if (oldN && oldP) {
-          setMigrationNeeded(true);
-        } else if (oldN) {
-          migrateNishant(JSON.parse(oldN));
-        } else {
-          migratePartner(JSON.parse(oldP), pName);
-        }
+      if (oldN) {
+        // Auto-migrate if only one old profile exists on this device
+        pickUser("nishant", JSON.parse(oldN));
+        localStorage.removeItem("rf2-n"); localStorage.removeItem("rf2-p"); localStorage.removeItem("rf2-pn");
+      } else if (oldP) {
+        pickUser("mrunali", JSON.parse(oldP));
+        localStorage.removeItem("rf2-n"); localStorage.removeItem("rf2-p"); localStorage.removeItem("rf2-pn");
       }
       setLoaded(true);
     } catch (e) {
@@ -75,81 +114,13 @@ export default function Reforge() {
     }
   }, [loaded, userData?.arsenalTracking]);
 
-  // ─── MIGRATION FUNCTIONS ──────────────────────────────────────────────────
-  const migrateNishant = (nData) => {
-    const migrated = {
-      name: "Nishant", gender: "male", dietPref: "non-veg", themeColor: "orange",
-      enableCycleTracking: false, arsenalTracking: true,
-      plan: {
-        exerciseTemplate: "aggressive",
-        cravingTriggers: NISHANT_CRAVING_TRIGGERS,
-        nutritionByPhase: PHASES_AGGRESSIVE.map(p => p.nutrition),
-        guiltyPleasure: null, lateNightEvent: null,
-      },
-      startDate: nData.startDate, startWeight: nData.startWeight || 103.2,
-      targetWeight: nData.targetWeight || 78, weightLog: nData.weightLog || [],
-      checkins: nData.checkins || {}, streak: nData.streak || 0,
-      bestStreak: nData.bestStreak || 0, cravingsHandled: Array.isArray(nData.cravingsHandled) ? nData.cravingsHandled : [],
-      lateNightPrepped: Array.isArray(nData.matchNightPrepped) ? nData.matchNightPrepped : [], guiltyPleasureLog: [],
-      lastPeriod: null,
-      grow: { avoidanceLog: [], microCompletions: {}, visibilityLevel: 0, visibilityLog: [], screenTimeLog: {}, screenTimeDailyGoal: 60, weeklyPlan: { create: 2, finish: 1, share: 1, movement: 3 } },
-    };
-    setUserData(migrated);
-    localStorage.removeItem("rf2-n"); localStorage.removeItem("rf2-p"); localStorage.removeItem("rf2-pn");
-    setMigrationNeeded(false);
-  };
-
-  const migratePartner = (pData, pName) => {
-    const migrated = {
-      name: pName || "Partner", gender: "female", dietPref: "non-veg", themeColor: "pink",
-      enableCycleTracking: true, arsenalTracking: false,
-      plan: {
-        exerciseTemplate: "gentle",
-        cravingTriggers: [],
-        nutritionByPhase: PHASES_GENTLE.map(p => p.nutrition),
-        guiltyPleasure: { name: "Fizzy Drinks", items: FIZZY_DRINKS, weeklyAllowance: FIZZY_ALLOWANCE },
-        lateNightEvent: null,
-      },
-      startDate: pData.startDate, startWeight: pData.startWeight,
-      targetWeight: pData.targetWeight, weightLog: pData.weightLog || [],
-      checkins: pData.checkins || {}, streak: pData.streak || 0,
-      bestStreak: pData.bestStreak || 0, cravingsHandled: [],
-      lateNightPrepped: [], guiltyPleasureLog: pData.fizzyLog || [],
-      lastPeriod: pData.lastPeriod || null,
-      grow: { avoidanceLog: [], microCompletions: {}, visibilityLevel: 0, visibilityLog: [], screenTimeLog: {}, screenTimeDailyGoal: 60, weeklyPlan: { create: 2, finish: 1, share: 1, movement: 3 } },
-    };
-    setUserData(migrated);
-    localStorage.removeItem("rf2-n"); localStorage.removeItem("rf2-p"); localStorage.removeItem("rf2-pn");
-    setMigrationNeeded(false);
-  };
-
-  // ─── QUESTIONNAIRE COMPLETION ─────────────────────────────────────────────
-  const onQuestionnaireComplete = async (qData) => {
-    setPlanLoading(true);
-    const initial = {
-      name: qData.name, gender: qData.gender, dietPref: qData.dietPref,
-      themeColor: qData.themeColor, enableCycleTracking: qData.enableCycleTracking || false,
-      arsenalTracking: false, plan: null,
-      startDate: null, startWeight: null, targetWeight: null,
-      weightLog: [], checkins: {}, streak: 0, bestStreak: 0,
-      cravingsHandled: [], lateNightPrepped: [], guiltyPleasureLog: [], lastPeriod: null,
-      grow: { avoidanceLog: [], microCompletions: {}, visibilityLevel: 0, visibilityLog: [], screenTimeLog: {}, screenTimeDailyGoal: 60, weeklyPlan: { create: 2, finish: 1, share: 1, movement: 3 } },
-    };
-    try {
-      const res = await fetch("/api/generate-plan", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ questionnaire: qData }),
-      });
-      const data = await res.json();
-      if (data.plan) { initial.plan = data.plan; }
-      else {
-        initial.plan = { exerciseTemplate: "moderate", cravingTriggers: [], nutritionByPhase: EXERCISE_TEMPLATES.moderate.map(p => p.nutrition), guiltyPleasure: null, lateNightEvent: null };
-      }
-    } catch (e) {
-      initial.plan = { exerciseTemplate: "moderate", cravingTriggers: [], nutritionByPhase: EXERCISE_TEMPLATES.moderate.map(p => p.nutrition), guiltyPleasure: null, lateNightEvent: null };
+  // ─── USER SELECTION ─────────────────────────────────────────────────────
+  const pickUser = (who, existingData) => {
+    if (who === "nishant") {
+      setUserData(createNishantProfile(existingData));
+    } else {
+      setUserData(createMrunaliProfile(existingData));
     }
-    setUserData(initial);
-    setPlanLoading(false);
   };
 
   // ─── DERIVED VALUES ───────────────────────────────────────────────────────
@@ -202,26 +173,26 @@ export default function Reforge() {
 
   const logPeriod = (d) => { setUserData(p => ({ ...p, lastPeriod: d || today })); setShowCycleModal(false); setCycleDate(""); };
 
-  // ─── MIGRATION SCREEN ─────────────────────────────────────────────────────
-  if (migrationNeeded) {
+  // ─── WHO ARE YOU? SCREEN ───────────────────────────────────────────────────
+  if (loaded && !userData) {
     return (
       <div style={{ minHeight: "100vh", background: "#0a0c13", color: "#e2e4ea", fontFamily: "'DM Sans',sans-serif", position: "relative", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet" />
         <div style={{ position: "fixed", top: "-30%", right: "-20%", width: "60%", height: "60%", borderRadius: "50%", background: "radial-gradient(circle,rgba(245,158,11,0.1) 0%,transparent 70%)", pointerEvents: "none", zIndex: 0 }} />
         <div style={{ maxWidth: 480, margin: "0 auto", padding: "0 20px", textAlign: "center", position: "relative", zIndex: 1 }}>
           <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: "3px", color: "#f59e0b", marginBottom: 20 }}>REFORGE</div>
-          <h1 style={{ fontSize: 34, fontWeight: 800, fontFamily: "'Outfit',sans-serif", color: "#fff", marginBottom: 12, lineHeight: 1.2, letterSpacing: "-1px" }}>Who uses this device?</h1>
-          <p style={{ fontSize: 15, color: "#777", lineHeight: 1.7, maxWidth: 340, marginBottom: 32 }}>Select your profile to continue.</p>
+          <h1 style={{ fontSize: 34, fontWeight: 800, fontFamily: "'Outfit',sans-serif", color: "#fff", marginBottom: 12, lineHeight: 1.2, letterSpacing: "-1px" }}>Who's using this device?</h1>
+          <p style={{ fontSize: 15, color: "#777", lineHeight: 1.7, maxWidth: 340, margin: "0 auto 32px" }}>Pick your profile. Your plan, tracking, and everything will be set up for you.</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <button style={{ ...card, textAlign: "left", cursor: "pointer", border: "1.5px solid #f59e0b33", transition: "all 0.2s" }} onClick={() => migrateNishant(JSON.parse(localStorage.getItem("rf2-n")))}>
+            <button style={{ background: "rgba(255,255,255,0.03)", backdropFilter: "blur(10px)", borderRadius: 16, padding: 20, textAlign: "left", cursor: "pointer", border: "1.5px solid #f59e0b33", transition: "all 0.2s" }} onClick={() => pickUser("nishant")}>
               <div style={{ fontSize: 20, marginBottom: 8 }}>👊</div>
-              <div style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 4 }}>{migrationNames.n}</div>
-              <div style={{ fontSize: 12, color: "#777" }}>Aggressive fitness plan</div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 4 }}>Nishant</div>
+              <div style={{ fontSize: 12, color: "#777" }}>Aggressive plan · Arsenal tracker · Craving toolkit · Growth journal</div>
             </button>
-            <button style={{ ...card, textAlign: "left", cursor: "pointer", border: "1.5px solid #e879a833", transition: "all 0.2s" }} onClick={() => migratePartner(JSON.parse(localStorage.getItem("rf2-p")), migrationNames.p)}>
+            <button style={{ background: "rgba(255,255,255,0.03)", backdropFilter: "blur(10px)", borderRadius: 16, padding: 20, textAlign: "left", cursor: "pointer", border: "1.5px solid #e879a833", transition: "all 0.2s" }} onClick={() => pickUser("mrunali")}>
               <div style={{ fontSize: 20, marginBottom: 8 }}>✨</div>
-              <div style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 4 }}>{migrationNames.p}</div>
-              <div style={{ fontSize: 12, color: "#777" }}>Gentle steps & strength plan</div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 4 }}>Mrunali</div>
+              <div style={{ fontSize: 12, color: "#777" }}>Gentle steps plan · Cycle tracking · Fizzy drink budget</div>
             </button>
           </div>
         </div>
@@ -230,32 +201,17 @@ export default function Reforge() {
     );
   }
 
-  // ─── LOADING SCREEN ───────────────────────────────────────────────────────
-  if (planLoading) {
+  // ─── LOADING ───────────────────────────────────────────────────────────────
+  if (!loaded || !userData) {
     return (
-      <div style={{ minHeight: "100vh", background: "#0a0c13", color: "#e2e4ea", fontFamily: "'DM Sans',sans-serif", position: "relative", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet" />
-        <div style={{ position: "fixed", top: "-30%", right: "-20%", width: "60%", height: "60%", borderRadius: "50%", background: "radial-gradient(circle,rgba(245,158,11,0.1) 0%,transparent 70%)", pointerEvents: "none", zIndex: 0 }} />
-        <div style={{ textAlign: "center", position: "relative", zIndex: 1 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: "3px", color: "#f59e0b", marginBottom: 20 }}>REFORGE</div>
-          <h1 style={{ fontSize: 28, fontWeight: 800, fontFamily: "'Outfit',sans-serif", color: "#fff", marginBottom: 20, lineHeight: 1.2 }}>Building your personalized plan...</h1>
-          <div style={{ display: "flex", gap: 8, justifyContent: "center" }}>
-            {[0, 1, 2].map(i => (
-              <div key={i} style={{ width: 10, height: 10, borderRadius: "50%", background: "#f59e0b", animation: "dotPulse 1.2s infinite", animationDelay: `${i * 0.15}s` }} />
-            ))}
-          </div>
-        </div>
-        <style>{`body{margin:0;background:#0a0c13}@keyframes dotPulse{0%,100%{opacity:0.3;transform:scale(0.8)}50%{opacity:1;transform:scale(1.2)}}`}</style>
+      <div style={{ minHeight: "100vh", background: "#0a0c13", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: "3px", color: "#f59e0b" }}>REFORGE</div>
+        <style>{`body{margin:0;background:#0a0c13}`}</style>
       </div>
     );
   }
 
-  // ─── QUESTIONNAIRE ────────────────────────────────────────────────────────
-  if (!userData) {
-    return <Questionnaire onComplete={onQuestionnaireComplete} />;
-  }
-
-  // ─── ONBOARDING ───────────────────────────────────────────────────────────
+  // ─── ONBOARDING (weight/target/start date) ─────────────────────────────────
   if (!userData.startDate) {
     return (
       <div style={{ minHeight: "100vh", background: "#0a0c13", color: "#e2e4ea", fontFamily: "'DM Sans',sans-serif", position: "relative", overflow: "hidden" }}>
@@ -263,7 +219,7 @@ export default function Reforge() {
         <div style={{ position: "fixed", top: "-30%", right: "-20%", width: "60%", height: "60%", borderRadius: "50%", background: `radial-gradient(circle,${A.g} 0%,transparent 70%)`, pointerEvents: "none", zIndex: 0 }} />
         <div style={{ maxWidth: 480, margin: "0 auto", padding: "0 20px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", textAlign: "center", position: "relative", zIndex: 1 }}>
           <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: "3px", color: A.p, marginBottom: 20 }}>REFORGE</div>
-          <h1 style={{ fontSize: 34, fontWeight: 800, fontFamily: "'Outfit',sans-serif", color: "#fff", marginBottom: 12, lineHeight: 1.2, letterSpacing: "-1px" }}>{userData.name}'s journey starts here.</h1>
+          <h1 style={{ fontSize: 34, fontWeight: 800, fontFamily: "'Outfit',sans-serif", color: "#fff", marginBottom: 12, lineHeight: 1.2, letterSpacing: "-1px" }}>Hey {userData.name} 👊</h1>
           <p style={{ fontSize: 15, color: "#777", lineHeight: 1.7, maxWidth: 340, marginBottom: 32 }}>
             Set your starting weight, goal, and when you want to begin.
           </p>
@@ -292,7 +248,7 @@ export default function Reforge() {
             Begin the Journey <ArrowRight size={16} style={{ marginLeft: 6, verticalAlign: "middle" }} />
           </button>
         </div>
-        <style>{`body{margin:0;background:#0a0c13}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}@keyframes cp{0%{transform:translate(-50%,-50%) scale(.7);opacity:0}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}`}</style>
+        <style>{`body{margin:0;background:#0a0c13}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}`}</style>
       </div>
     );
   }
@@ -312,7 +268,7 @@ export default function Reforge() {
         </div>
 
         {/* Tab Content */}
-        {activeTab === "today" && <Today {...{ userData, setUserData, today, dayName, phases, phIdx, phase, todayPlan, weekNum, ci, latestW, lost, pct, quote, cDay, cPhIdx, cPh, notStartedYet, daysUntilStart, showMatchNightCard, arsenalSoon, arsenalNext, showWeightModal, setShowWeightModal, showCycleModal, setShowCycleModal, showGuiltyModal, setShowGuiltyModal, weightInput, setWeightInput, cycleDate, setCycleDate, styles, A, TC, logW, logPeriod, celebration, setCelebration }} />}
+        {activeTab === "today" && <Today {...{ userData, setUserData, today, dayName, phases, phIdx, phase, todayPlan, weekNum, ci, latestW, lost, pct, quote, cDay, cPhIdx, cPh, notStartedYet, daysUntilStart, showMatchNightCard, arsenalSoon, arsenalNext, showWeightModal, setShowWeightModal, showCycleModal, setShowCycleModal, showGuiltyModal, setShowGuiltyModal, styles, A, TC, logW, logPeriod, celebration, setCelebration }} />}
         {activeTab === "plan" && <PlanView {...{ userData, setUserData, phases, phIdx, phase, dayName, weekNum, cPhIdx, showPhaseDetail, setPhaseDetail: setShowPhaseDetail, styles, A, TC }} />}
         {activeTab === "grow" && <Grow {...{ userData, setUserData, styles, A, TC }} />}
         {activeTab === "ask" && Ask({ userData, A, styles, TC })}
