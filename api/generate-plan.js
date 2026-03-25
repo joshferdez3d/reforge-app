@@ -280,7 +280,6 @@ export default async function handler(req, res) {
       "activityLevel",
       "exerciseTime",
       "struggleTimes",
-      "specificHabit",
       "foodWeaknesses",
       "dietPref",
     ];
@@ -290,6 +289,10 @@ export default async function handler(req, res) {
           .status(400)
           .json({ error: `Missing required field: ${field}` });
       }
+    }
+    // Provide default for optional fields
+    if (!questionnaire.specificHabit) {
+      questionnaire.specificHabit = "Build consistent healthy habits";
     }
 
     const prompt = buildPrompt(questionnaire);

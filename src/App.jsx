@@ -184,6 +184,7 @@ export default function Reforge() {
   const inp = { background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "12px 16px", fontSize: 16, color: "#fff", width: "100%", fontFamily: "inherit", outline: "none", boxSizing: "border-box" };
   const btn = { background: A.gr, color: "#0a0c13", border: "none", borderRadius: 12, padding: "14px 24px", fontSize: 15, fontWeight: 700, cursor: "pointer", width: "100%", fontFamily: "inherit" };
   const btnO = { background: "transparent", color: A.p, border: `1.5px solid ${A.p}33`, borderRadius: 12, padding: "12px 20px", fontSize: 14, fontWeight: 600, cursor: "pointer", width: "100%", fontFamily: "inherit" };
+  const styles = { card, cardG, lbl, tag, inp, btn, btnO };
 
   // ─── ACTIONS ──────────────────────────────────────────────────────────────
   const logW = () => {
@@ -311,11 +312,11 @@ export default function Reforge() {
         </div>
 
         {/* Tab Content */}
-        {activeTab === "today" && <Today {...{ userData, setUserData, today, dayName, phases, phIdx, phase, todayPlan, weekNum, ci, latestW, lost, pct, quote, cDay, cPhIdx, cPh, notStartedYet, daysUntilStart, showMatchNightCard, arsenalSoon, arsenalNext, showWeightModal, setShowWeightModal, showCycleModal, setShowCycleModal, weightInput, setWeightInput, cycleDate, setCycleDate, card, cardG, lbl, tag, inp, btn, btnO, A, TC, logW, logPeriod, celebration, setCelebration }} />}
-        {activeTab === "plan" && <PlanView {...{ userData, setUserData, phases, phIdx, phase, dayName, weekNum, showPhaseDetail, setShowPhaseDetail, card, cardG, lbl, tag, inp, btn, btnO, A, TC }} />}
-        {activeTab === "grow" && <Grow {...{ userData, setUserData, card, cardG, lbl, tag, inp, btn, btnO, A, TC }} />}
-        {activeTab === "ask" && Ask({ userData, A, TC })}
-        {activeTab === "progress" && <Progress {...{ userData, setUserData, today, latestW, lost, pct, weekNum, card, cardG, lbl, tag, inp, btn, btnO, A, TC }} />}
+        {activeTab === "today" && <Today {...{ userData, setUserData, today, dayName, phases, phIdx, phase, todayPlan, weekNum, ci, latestW, lost, pct, quote, cDay, cPhIdx, cPh, notStartedYet, daysUntilStart, showMatchNightCard, arsenalSoon, arsenalNext, showWeightModal, setShowWeightModal, showCycleModal, setShowCycleModal, showGuiltyModal, setShowGuiltyModal, weightInput, setWeightInput, cycleDate, setCycleDate, styles, A, TC, logW, logPeriod, celebration, setCelebration }} />}
+        {activeTab === "plan" && <PlanView {...{ userData, setUserData, phases, phIdx, phase, dayName, weekNum, cPhIdx, showPhaseDetail, setPhaseDetail: setShowPhaseDetail, styles, A, TC }} />}
+        {activeTab === "grow" && <Grow {...{ userData, setUserData, styles, A, TC }} />}
+        {activeTab === "ask" && Ask({ userData, A, styles, TC })}
+        {activeTab === "progress" && <Progress {...{ userData, setUserData, today, latestW, lost, pct, weekNum, styles, A, TC }} />}
       </div>
 
       {/* Navigation */}

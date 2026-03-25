@@ -16,7 +16,7 @@ export default function Questionnaire({ onComplete, themeColor = 'orange' }) {
     enableCycleTracking: false,
   });
 
-  const accentColor = THEME_COLORS[formData.themeColor]?.hex || THEME_COLORS.orange.hex;
+  const accentColor = THEME_COLORS[formData.themeColor]?.p || THEME_COLORS.orange.p;
 
   const handleNext = () => {
     if (canProceed()) {
@@ -452,7 +452,7 @@ export default function Questionnaire({ onComplete, themeColor = 'orange' }) {
                 <div
                   key={colorKey}
                   style={styles.colorCircle(
-                    colorObj.hex,
+                    colorObj.p,
                     formData.themeColor === colorKey
                   )}
                   onClick={() =>
