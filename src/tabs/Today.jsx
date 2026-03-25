@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Check, Clock, Footprints, TrendingDown, Droplets, Salad, Star, Flame, Zap, Sun, Moon, Calendar, Activity, Dumbbell, Coffee, Wind, ArrowRight } from "lucide-react";
-import { generateMilestones } from "../helpers";
-import { GROWTH_DAY_PLAN, TYPE_COLORS } from "../constants";
+import { Check, Clock, Footprints, TrendingDown, Droplets, Salad, Star, Flame, Zap, Sun, Moon, Calendar, Activity, Dumbbell, Coffee, Wind, ArrowRight, X } from "lucide-react";
+import { generateMilestones, getWeekStart, formatDate } from "../helpers";
+import { GROWTH_DAY_PLAN, TYPE_COLORS, FIZZY_DRINKS, FIZZY_ALLOWANCE, FIZZY_MSGS, FIZZY_EMPTY_MSGS, formatMatchTimeIST } from "../constants";
 
 const TIcon = ({ type, sz = 18 }) => {
   const c = TYPE_COLORS[type] || "#666";
@@ -13,9 +13,11 @@ const TIcon = ({ type, sz = 18 }) => {
 };
 
 export default function Today(props) {
-  const { userData, setUserData, phases, phase, phIdx, todayPlan, today, dayName, weekNum, ci, latestW, lost, pct, quote, notStartedYet, daysUntilStart, cDay, cPhIdx, cPh, A, TC, styles, setShowWeightModal, setShowCycleModal, setShowGuiltyModal } = props;
+  const { userData, setUserData, phases, phase, phIdx, todayPlan, today, dayName, weekNum, ci, latestW, lost, pct, quote, notStartedYet, daysUntilStart, cDay, cPhIdx, cPh, showMatchNightCard, arsenalSoon, arsenalNext, A, TC, styles, setShowWeightModal, setShowCycleModal } = props;
 
   const [celebration, setCelebration] = useState(null);
+  const [showFizzyModal, setShowFizzyModal] = useState(false);
+  const [pauseRitual, setPauseRitual] = useState(null); // { triggerId, step }
   const hasSteps = todayPlan?.stepGoal;
 
   const showCelebration = (msg) => {
@@ -37,46 +39,63 @@ export default function Today(props) {
   };
 
   const toggleCraving = (triggerId) => {
-    const updated = { ...userData };
-    if (!updated.cravingsHandled) updated.cravingsHandled = [];
-    const idx = updated.cravingsHandled.findIndex(e => e.triggerId === triggerId && e.date === today);
+    const cravings = [...(userData.cravingsHandled || [])];
+    const idx = cravings.findIndex(e => e.triggerId === triggerId && e.date === today);
     if (idx >= 0) {
-      updated.cravingsHandled.splice(idx, 1);
+      cravings.splice(idx, 1);
     } else {
-      updated.cravingsHandled.push({ triggerId, date: today });
+      cravings.push({ triggerId, date: today });
     }
-    setUserData(updated);
+    setUserData({ ...userData, cravingsHandled: cravings });
     showCelebration(`🎯 Craving handled!`);
+    setPauseRitual(null);
   };
 
   const toggleMatchPrep = () => {
-    const updated = { ...userData };
-    if (!updated.matchNightPrepped) updated.matchNightPrepped = [];
-    const idx = updated.matchNightPrepped.indexOf(today);
+    const prepped = [...(userData.lateNightPrepped || [])];
+    const idx = prepped.indexOf(today);
     if (idx >= 0) {
-      updated.matchNightPrepped.splice(idx, 1);
+      prepped.splice(idx, 1);
     } else {
-      updated.matchNightPrepped.push(today);
+      prepped.push(today);
     }
-    setUserData(updated);
+    setUserData({ ...userData, lateNightPrepped: prepped });
     showCelebration(`⚽ Match snacks ready!`);
   };
 
-  const toggleGuiltyPleasure = (itemId) => {
-    const updated = { ...userData };
-    if (!updated.guiltyPleasureLog) updated.guiltyPleasureLog = [];
-    updated.guiltyPleasureLog.push({ itemId, date: today });
-    setUserData(updated);
-    showCelebration(`🎉 Logged!`);
+  const logFizzy = (drinkId) => {
+    if (fizzyRemaining <= 0) return;
+    const drink = FIZZY_DRINKS.find(d => d.id === drinkId);
+    const log = [...(userData.guiltyPleasureLog || []), { date: today, drink: drinkId, name: drink?.name }];
+    setUserData({ ...userData, guiltyPleasureLog: log });
+    setShowFizzyModal(false);
+    showCelebration(`🫧 ${drink?.name} logged!`);
   };
 
+  // Derived data
   const ckKeys = ["exercise", ...(hasSteps ? ["steps"] : []), "nutrition", "water"];
   const todayCravingsHandled = (userData.cravingsHandled || []).filter(e => e.date === today).map(e => e.triggerId);
-  const matchNightPreppedToday = (userData.matchNightPrepped || []).includes(today);
+  const lateNightPreppedToday = (userData.lateNightPrepped || []).includes(today);
   const milestones = generateMilestones(userData.startWeight, userData.targetWeight);
   const nextM = milestones.find(m => m.kg > latestW);
   const toM = nextM?.kg || 0;
   const cravingTriggers = userData.plan?.cravingTriggers || [];
+
+  // Fizzy drink budget (Mrunali's feature)
+  const gp = userData.plan?.guiltyPleasure;
+  const fizzyMax = gp ? (FIZZY_ALLOWANCE[phIdx] || 1) : 0;
+  const weekStart = getWeekStart();
+  const fizzyThisWeek = gp ? (userData.guiltyPleasureLog || []).filter(e => new Date(e.date) >= weekStart) : [];
+  const fizzyRemaining = Math.max(0, fizzyMax - fizzyThisWeek.length);
+  const fizzyMsg = fizzyRemaining > 0 ? (FIZZY_MSGS.find(m => m.max === fizzyMax)?.msg || FIZZY_MSGS[0].msg) : FIZZY_EMPTY_MSGS[Math.floor(Math.random() * FIZZY_EMPTY_MSGS.length)];
+
+  // Pause ritual steps
+  const PAUSE_STEPS = [
+    { emoji: "💧", text: "Drink a glass of water first", action: "Done — had water" },
+    { emoji: "⏳", text: "Wait 2 minutes. Set a timer.", action: "OK, I waited" },
+    { emoji: "🤔", text: "Ask yourself: am I actually hungry, or bored/stressed/tired?", action: "I've thought about it" },
+    { emoji: "✅", text: "Now decide: swap, skip, or have it mindfully", action: null },
+  ];
 
   return (
     <>
@@ -133,7 +152,7 @@ export default function Today(props) {
             ))}
           </div>
 
-          {/* Cycle Phase */}
+          {/* Cycle Phase (Mrunali) */}
           {userData.enableCycleTracking && userData.lastPeriod && (
             <div style={{ ...styles.cardG, borderColor: `${cPh.color}30`, background: `${cPh.color}08` }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -159,6 +178,46 @@ export default function Today(props) {
               <button style={{ ...styles.btnO, color: "#e879a8", borderColor: "#e879a833" }} onClick={() => setShowCycleModal(true)}>
                 <Calendar size={14} style={{ marginRight: 6, verticalAlign: "middle" }} /> Log Period Start
               </button>
+            </div>
+          )}
+
+          {/* Arsenal Match Night Prep Card (Nishant) */}
+          {showMatchNightCard && !lateNightPreppedToday && (
+            <div style={{ ...styles.card, marginTop: 16, borderColor: "#ef444425", background: "linear-gradient(135deg,rgba(239,68,68,0.06),rgba(239,68,68,0.02))" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                <span style={{ fontSize: 22 }}>⚽</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>Match Night Prep</div>
+                  {arsenalSoon ? (
+                    <div style={{ fontSize: 12, color: "#ef4444", marginTop: 2 }}>
+                      {arsenalSoon.isHome ? `Arsenal vs ${arsenalSoon.away}` : `${arsenalSoon.home} vs Arsenal`} — {formatMatchTimeIST(arsenalSoon.utcDate)}
+                      {arsenalSoon.competition ? <span style={{ color: "#888" }}> · {arsenalSoon.competition}</span> : null}
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: 12, color: "#888" }}>Prep your match snacks before dinner!</div>
+                  )}
+                </div>
+              </div>
+              <div style={{ padding: "12px 14px", background: "rgba(0,0,0,0.2)", borderRadius: 10, marginBottom: 12 }}>
+                <p style={{ fontSize: 13, color: "#bbb", margin: 0, lineHeight: 1.7 }}>
+                  Before dinner, get these ready: {(cravingTriggers.find(t => t.id === "match-night")?.swaps?.[phIdx] || cravingTriggers.find(t => t.id === "match-night")?.swaps?.[3] || ["Air-fried chicken strips", "Roasted chana", "Nuts + cucumber chaat masala"]).join(", ")}
+                </p>
+              </div>
+              <button onClick={toggleMatchPrep} style={{ background: "rgba(239,68,68,0.1)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer", width: "100%", fontFamily: "inherit" }}>
+                I've prepped my match snacks
+              </button>
+            </div>
+          )}
+          {showMatchNightCard && lateNightPreppedToday && (
+            <div style={{ ...styles.card, marginTop: 16, borderColor: "#10b98125", background: "rgba(16,185,129,0.04)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <span style={{ fontSize: 18 }}>⚽</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: "#10b981" }}>Match snacks prepped!</div>
+                  <div style={{ fontSize: 12, color: "#666" }}>{arsenalSoon ? `${arsenalSoon.isHome ? `Arsenal vs ${arsenalSoon.away}` : `${arsenalSoon.home} vs Arsenal`} — enjoy the game!` : "No 1am Zomato tonight. You've got this."}</div>
+                </div>
+                <Check size={18} color="#10b981" />
+              </div>
             </div>
           )}
 
@@ -203,7 +262,7 @@ export default function Today(props) {
             ))}
           </div>
 
-          {/* Cravings Toolkit */}
+          {/* Cravings Toolkit with Pause Ritual (Nishant) */}
           {cravingTriggers.length > 0 && (
             <div style={{ marginTop: 20 }}>
               <div style={styles.lbl}>CRAVINGS TOOLKIT · {todayCravingsHandled.length} handled</div>
@@ -211,6 +270,8 @@ export default function Today(props) {
               {cravingTriggers.map(trigger => {
                 const handled = todayCravingsHandled.includes(trigger.id);
                 const swaps = trigger.swaps[phIdx] || trigger.swaps[3];
+                const inPause = pauseRitual?.triggerId === trigger.id;
+                const pauseStep = pauseRitual?.step || 0;
                 return (
                   <div key={trigger.id} style={{ ...styles.card, borderColor: handled ? `${trigger.color}25` : "rgba(255,255,255,0.05)", background: handled ? `${trigger.color}06` : "rgba(255,255,255,0.03)" }}>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
@@ -218,7 +279,11 @@ export default function Today(props) {
                         <span style={{ fontSize: 20 }}>{trigger.emoji}</span>
                         <div>
                           <div style={{ fontSize: 14, fontWeight: 600, color: "#ddd" }}>{trigger.label}</div>
-                          <div style={{ fontSize: 11, color: "#666" }}>{trigger.time}</div>
+                          <div style={{ fontSize: 11, color: "#666" }}>
+                            {trigger.id === "match-night" && arsenalNext
+                              ? `Next: ${arsenalNext.isHome ? `vs ${arsenalNext.away}` : `at ${arsenalNext.home}`} · ${formatMatchTimeIST(arsenalNext.utcDate)}`
+                              : trigger.time}
+                          </div>
                         </div>
                       </div>
                       {handled && <span style={styles.tag("#10b981")}>handled</span>}
@@ -235,23 +300,94 @@ export default function Today(props) {
                       <Star size={12} color={trigger.color} style={{ marginTop: 2, flexShrink: 0 }} />
                       <p style={{ fontSize: 12, color: "#777", margin: 0, lineHeight: 1.5, fontStyle: "italic" }}>{trigger.tip}</p>
                     </div>
-                    <button onClick={() => toggleCraving(trigger.id)} style={{ background: handled ? `${trigger.color}10` : "rgba(255,255,255,0.05)", color: handled ? trigger.color : "#ddd", border: `1px solid ${handled ? `${trigger.color}30` : "rgba(255,255,255,0.08)"}`, borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer", width: "100%", fontFamily: "inherit", transition: "all 0.2s" }}>
-                      {handled ? "Handled — nice work!" : "Mark as handled"}
-                    </button>
+
+                    {/* Pause Ritual */}
+                    {inPause && !handled && (
+                      <div style={{ padding: "14px", background: "rgba(0,0,0,0.2)", borderRadius: 12, marginBottom: 10, border: `1px solid ${trigger.color}15` }}>
+                        <div style={{ fontSize: 11, fontWeight: 600, color: trigger.color, marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.5px" }}>Pause Ritual · Step {pauseStep + 1}/4</div>
+                        {PAUSE_STEPS.map((step, i) => (
+                          <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 0", opacity: i <= pauseStep ? 1 : 0.3 }}>
+                            <span style={{ fontSize: 16 }}>{i < pauseStep ? "✅" : step.emoji}</span>
+                            <span style={{ fontSize: 13, color: i <= pauseStep ? "#ddd" : "#555", flex: 1 }}>{step.text}</span>
+                          </div>
+                        ))}
+                        {pauseStep < 3 && (
+                          <button onClick={() => setPauseRitual({ triggerId: trigger.id, step: pauseStep + 1 })} style={{ background: `${trigger.color}15`, color: trigger.color, border: `1px solid ${trigger.color}25`, borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer", width: "100%", fontFamily: "inherit", marginTop: 8 }}>
+                            {PAUSE_STEPS[pauseStep].action}
+                          </button>
+                        )}
+                        {pauseStep === 3 && (
+                          <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+                            <button onClick={() => toggleCraving(trigger.id)} style={{ flex: 1, background: `${trigger.color}15`, color: trigger.color, border: `1px solid ${trigger.color}25`, borderRadius: 10, padding: "10px", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                              Had a swap ✅
+                            </button>
+                            <button onClick={() => { toggleCraving(trigger.id); }} style={{ flex: 1, background: "rgba(16,185,129,0.1)", color: "#10b981", border: "1px solid rgba(16,185,129,0.2)", borderRadius: 10, padding: "10px", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                              Skipped it 💪
+                            </button>
+                            <button onClick={() => setPauseRitual(null)} style={{ flex: 1, background: "rgba(255,255,255,0.05)", color: "#888", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: "10px", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+                              Had it
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {!handled && !inPause && (
+                      <button onClick={() => setPauseRitual({ triggerId: trigger.id, step: 0 })} style={{ background: "rgba(255,255,255,0.05)", color: "#ddd", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer", width: "100%", fontFamily: "inherit", transition: "all 0.2s" }}>
+                        Feeling this craving? Start pause ritual
+                      </button>
+                    )}
+                    {handled && (
+                      <div style={{ textAlign: "center", fontSize: 13, fontWeight: 600, color: trigger.color, padding: "8px 0" }}>
+                        Handled — nice work! 🎯
+                      </div>
+                    )}
                   </div>
                 );
               })}
             </div>
           )}
 
-          {/* Guilty Pleasure Budget */}
-          {userData.plan?.guiltyPleasure && (
+          {/* Fizzy Drink Budget (Mrunali) */}
+          {gp && userData.startDate && (
             <div style={{ marginTop: 20 }}>
-              <div style={styles.lbl}>GUILTY PLEASURE BUDGET</div>
-              <div style={styles.card}>
-                <p style={{ fontSize: 13, color: "#bbb", margin: "0 0 12px", lineHeight: 1.6 }}>A little treat goes a long way. Pick your moment wisely!</p>
-                <button style={{ ...styles.btnO }} onClick={() => setShowGuiltyModal(true)}>
-                  Log a treat
+              <div style={styles.lbl}>FIZZY DRINK BUDGET · {fizzyRemaining}/{fizzyMax} left</div>
+              <div style={{ ...styles.card, border: `1px solid ${fizzyRemaining > 0 ? "rgba(255,255,255,0.05)" : "#ef444422"}` }}>
+                {/* Bubble indicators */}
+                <div style={{ display: "flex", gap: 8, marginBottom: 14, flexWrap: "wrap" }}>
+                  {Array.from({ length: fizzyMax }).map((_, i) => {
+                    const used = i < fizzyThisWeek.length;
+                    const drink = used ? FIZZY_DRINKS.find(d => d.id === fizzyThisWeek[i]?.drink) : null;
+                    return (
+                      <div key={i} style={{ width: 38, height: 38, borderRadius: 12, background: used ? `${drink?.color || "#666"}20` : "rgba(255,255,255,0.04)", border: `1.5px solid ${used ? `${drink?.color || "#666"}40` : "rgba(255,255,255,0.08)"}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, opacity: used ? 0.6 : 1, transition: "all 0.2s" }}>
+                        {used ? drink?.emoji || "🥤" : <span style={{ fontSize: 18, opacity: 0.3 }}>🫧</span>}
+                      </div>
+                    );
+                  })}
+                </div>
+                {/* This week's log */}
+                {fizzyThisWeek.length > 0 && (
+                  <div style={{ marginBottom: 12 }}>
+                    {fizzyThisWeek.map((e, i) => {
+                      const drink = FIZZY_DRINKS.find(d => d.id === e.drink);
+                      return (
+                        <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, marginTop: i > 0 ? 6 : 0 }}>
+                          <span style={{ fontSize: 13 }}>{drink?.emoji}</span>
+                          <span style={{ fontSize: 12, color: "#888" }}>{drink?.name}</span>
+                          <span style={{ fontSize: 11, color: "#555", marginLeft: "auto" }}>{formatDate(e.date)}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+                {/* Message */}
+                <p style={{ fontSize: 12, color: fizzyRemaining > 0 ? "#888" : "#ef4444", margin: "0 0 14px", lineHeight: 1.5, fontStyle: "italic" }}>{fizzyMsg}</p>
+                {/* Log button */}
+                <button
+                  style={{ background: fizzyRemaining > 0 ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.02)", color: fizzyRemaining > 0 ? "#ddd" : "#444", border: `1px solid ${fizzyRemaining > 0 ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.03)"}`, borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 600, cursor: fizzyRemaining > 0 ? "pointer" : "default", width: "100%", fontFamily: "inherit", transition: "all 0.2s" }}
+                  onClick={() => fizzyRemaining > 0 && setShowFizzyModal(true)}
+                >
+                  {fizzyRemaining > 0 ? `🫧 Log a Fizzy Drink (${fizzyRemaining} left)` : "✅ Budget used — great discipline!"}
                 </button>
               </div>
             </div>
@@ -306,6 +442,30 @@ export default function Today(props) {
             </div>
           </div>
         </>
+      )}
+
+      {/* Fizzy Drink Modal */}
+      {showFizzyModal && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)", zIndex: 150, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => setShowFizzyModal(false)}>
+          <div style={{ background: "#141620", borderRadius: 20, padding: 28, width: "90%", maxWidth: 400, border: "1px solid rgba(255,255,255,0.07)" }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+              <h3 style={{ fontSize: 18, fontWeight: 700, color: "#fff", margin: 0 }}>🫧 Log a Fizzy</h3>
+              <button style={{ background: "none", border: "none", cursor: "pointer", color: "#555", padding: 4 }} onClick={() => setShowFizzyModal(false)}><X size={20} /></button>
+            </div>
+            <p style={{ fontSize: 13, color: "#777", margin: "0 0 20px" }}>{fizzyRemaining} of {fizzyMax} remaining this week</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {FIZZY_DRINKS.map(drink => (
+                <button key={drink.id} onClick={() => logFizzy(drink.id)} style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 18px", background: `${drink.color}0a`, border: `1.5px solid ${drink.color}25`, borderRadius: 14, cursor: "pointer", fontFamily: "inherit", transition: "all 0.15s", width: "100%", textAlign: "left" }}>
+                  <span style={{ fontSize: 28 }}>{drink.emoji}</span>
+                  <div>
+                    <div style={{ fontSize: 15, fontWeight: 600, color: "#ddd" }}>{drink.name}</div>
+                    <div style={{ fontSize: 12, color: "#666", marginTop: 2 }}>Tap to log</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
       )}
 
       <style>{`
