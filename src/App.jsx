@@ -79,7 +79,13 @@ export default function Reforge() {
     try {
       const saved = localStorage.getItem("rf2-user");
       if (saved) {
-        setUserData(JSON.parse(saved));
+        const data = JSON.parse(saved);
+        // Migration: enable coach plan for Nishant + reset week tracker
+        if (data.name === "Nishant" && !data.coachPlan) {
+          data.coachPlan = true;
+          data.startDate = new Date().toISOString().split("T")[0];
+        }
+        setUserData(data);
         setLoaded(true);
         return;
       }
