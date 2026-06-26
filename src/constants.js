@@ -1,17 +1,17 @@
 // ─── AGGRESSIVE PLAN (Nishant's original plan) ────────────────────────────────
 export const PHASES_AGGRESSIVE = [
   {
-    id: 1, name: "Build the Foundation", weeks: "1–4", subtitle: "Create the daily habit",
+    id: 1, name: "Foundation Phase", weeks: "1–4", subtitle: "Coach Amit Kumar's strength foundation",
     weeklyPlan: [
-      { day: "Monday", type: "walk", title: "Morning Walk", duration: "25 min", detail: "Easy pace, focus on breathing. No rush. Treadmill: 4.5–5 km/h, 1% incline." },
-      { day: "Tuesday", type: "strength", title: "Bodyweight Basics", duration: "15 min", detail: "Wall pushups ×10, Chair squats ×10, Plank 20s — 3 rounds" },
-      { day: "Wednesday", type: "walk", title: "Walk + Stretch", duration: "30 min", detail: "20 min walk (5 km/h, 1% incline), then stretch: Neck rolls 10 each way → Shoulder circles 10 forward/back → Standing quad stretch 30s each leg (hold wall for balance) → Standing hamstring stretch 30s each (foot on low step, lean forward) → Hip flexor stretch 30s each (big lunge, push hips forward) → Chest doorway stretch 30s → Seated spinal twist 30s each side." },
-      { day: "Thursday", type: "rest", title: "Active Rest", duration: "15 min", detail: "Hip circles 10 each direction → Leg swings 10 each (forward/back, hold wall) → Cat-cow on all fours 10 reps → World's greatest stretch 5 each side (lunge, twist, reach up) → Shoulder rolls 10 each → Neck tilts 30s each side → Child's pose 60s. Repeat if it feels good." },
-      { day: "Friday", type: "strength", title: "Bodyweight Basics", duration: "15 min", detail: "Wall pushups ×12, Chair squats ×12, Plank 25s — 3 rounds" },
-      { day: "Saturday", type: "walk", title: "Long Walk", duration: "40 min", detail: "Explore a new route. Listen to a podcast. Enjoy it. Treadmill: 4.5–5 km/h, 2% incline." },
-      { day: "Sunday", type: "rest", title: "Full Rest", duration: "—", detail: "Rest completely. If you feel like moving: neck rolls, shoulder shrugs, standing toe touch hold 30s, child's pose 60s. That's it — nothing more." },
+      { day: "Monday", type: "strength", title: "Lower Body Strength + Joint Prep", duration: "45 min", detail: "Goblet Squat 4×8-10, Romanian Deadlift 4×8-10, Reverse Lunges 3×10 each, Step-Ups 3×12 each, Calf Raises 3×15 + Lower Back Conditioning" },
+      { day: "Tuesday", type: "strength", title: "Upper Body + Shoulder Health", duration: "45 min", detail: "Incline DB Press 4×8-10, Chest Supported Row 4×10, Seated DB Press 3×10, Lat Pulldown 3×12, Face Pull 3×15 + Rotator Cuff + Core" },
+      { day: "Wednesday", type: "mobility", title: "Recovery Mobility", duration: "40 min", detail: "Full body mobility flow + Core Stability + 20-30 min easy pace walk" },
+      { day: "Thursday", type: "strength", title: "Bulletproof Body Strength", duration: "50 min", detail: "DB Deadlift 4×6-8, Bulgarian Split Squat 3×10, Single-Leg RDL 3×10, Chest Supported Row 3×12, Push-Up 3×12 + Joint Circuit" },
+      { day: "Friday", type: "rest", title: "Active Recovery", duration: "25 min", detail: "Post-meal walking + daily 10-min joint routine. Light movement only." },
+      { day: "Saturday", type: "walk", title: "Walking", duration: "30 min", detail: "Brisk walk, explore a new route. Daily joint routine." },
+      { day: "Sunday", type: "rest", title: "Full Rest", duration: "—", detail: "Rest completely. Daily 10-min joint routine only." },
     ],
-    nutrition: ["Eat 3 meals a day — no snacking between", "Fill half your plate with vegetables", "Cut all sugary drinks — water, black coffee, tea only", "Drink 2.5L of water daily", "No food after 8pm"],
+    nutrition: ["Don't train on empty stomach", "Eat 3 meals a day — no snacking between", "Fill half your plate with vegetables", "Cut all sugary drinks — water, black coffee, tea only", "Drink 2.5L of water daily", "No food after 8pm"],
   },
   {
     id: 2, name: "Build Strength", weeks: "5–8", subtitle: "Add resistance, push further",
@@ -202,6 +202,7 @@ export const TYPE_COLORS = {
   cardio: "#ef4444",
   rest: "#10b981",
   gentle: "#a78bfa",
+  mobility: "#8b5cf6",
 };
 
 // ─── QUOTES ───────────────────────────────────────────────────────────────────

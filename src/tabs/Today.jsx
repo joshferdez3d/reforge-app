@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Check, Clock, Footprints, TrendingDown, Droplets, Salad, Star, Flame, Zap, Sun, Moon, Calendar, Activity, Dumbbell, Coffee, Wind, ArrowRight, X } from "lucide-react";
+import { Check, Clock, Footprints, TrendingDown, Droplets, Salad, Star, Flame, Zap, Sun, Moon, Calendar, Activity, Dumbbell, Coffee, Wind, ArrowRight, X, ChevronDown, Play } from "lucide-react";
 import { generateMilestones, getWeekStart, formatDate } from "../helpers";
 import { GROWTH_DAY_PLAN, TYPE_COLORS, FIZZY_DRINKS, FIZZY_ALLOWANCE, FIZZY_MSGS, FIZZY_EMPTY_MSGS, formatMatchTimeIST } from "../constants";
+import { COACH_WORKOUT, DAILY_JOINT_ROUTINE } from "../workoutPlan";
 
 const TIcon = ({ type, sz = 18 }) => {
   const c = TYPE_COLORS[type] || "#666";
@@ -9,6 +10,7 @@ const TIcon = ({ type, sz = 18 }) => {
   if (type === "gentle") return <Wind size={sz} color={c} />;
   if (type === "walk" || type === "cardio") return <Activity size={sz} color={c} />;
   if (type === "strength") return <Dumbbell size={sz} color={c} />;
+  if (type === "mobility") return <Wind size={sz} color={c} />;
   return <Coffee size={sz} color={c} />;
 };
 
@@ -18,7 +20,19 @@ export default function Today(props) {
   const [celebration, setCelebration] = useState(null);
   const [showFizzyModal, setShowFizzyModal] = useState(false);
   const [pauseRitual, setPauseRitual] = useState(null); // { triggerId, step }
+  const [closedSections, setClosedSections] = useState(new Set());
+  const [showJointRoutine, setShowJointRoutine] = useState(false);
   const hasSteps = todayPlan?.stepGoal;
+  const coachToday = userData.coachPlan ? COACH_WORKOUT[dayName] : null;
+
+  const toggleSection = (idx) => {
+    setClosedSections(prev => {
+      const next = new Set(prev);
+      if (next.has(idx)) next.delete(idx);
+      else next.add(idx);
+      return next;
+    });
+  };
 
   const showCelebration = (msg) => {
     setCelebration(msg);
@@ -221,10 +235,94 @@ export default function Today(props) {
             </div>
           )}
 
-          {/* Today's Plan */}
+          {/* Today's Workout / Plan */}
           <div style={{ marginTop: 20 }}>
-            <div style={styles.lbl}>TODAY'S PLAN</div>
-            {todayPlan ? (
+            <div style={styles.lbl}>{coachToday ? "TODAY'S WORKOUT" : "TODAY'S PLAN"}</div>
+
+            {coachToday ? (
+              /* ─── COACH WORKOUT VIEW ───────────────────────────── */
+              <div style={styles.cardG}>
+                {/* Header */}
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: coachToday.sections.length > 0 ? 16 : 0 }}>
+                  <div style={{ width: 42, height: 42, borderRadius: 12, background: `${TC[coachToday.type] || "#666"}12`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <TIcon type={coachToday.type} sz={20} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 18, fontWeight: 700, color: "#fff" }}>{coachToday.title}</div>
+                    <div style={{ display: "flex", gap: 8, marginTop: 4, alignItems: "center" }}>
+                      <span style={styles.tag(TC[coachToday.type] || "#666")}>{coachToday.type}</span>
+                      <span style={{ fontSize: 12, color: "#666" }}><Clock size={12} style={{ verticalAlign: "middle", marginRight: 3 }} />{coachToday.duration}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* No sections = rest day message */}
+                {coachToday.sections.length === 0 && (
+                  <div style={{ padding: "12px 14px", background: "rgba(0,0,0,0.15)", borderRadius: 10 }}>
+                    <p style={{ fontSize: 14, color: "#bbb", margin: 0, lineHeight: 1.7 }}>Rest completely. Do your daily 10-min joint routine below and recharge.</p>
+                  </div>
+                )}
+
+                {/* Sections */}
+                {coachToday.sections.map((section, si) => {
+                  const isOpen = !closedSections.has(si);
+                  return (
+                    <div key={si} style={{ marginTop: si > 0 ? 8 : 0 }}>
+                      {/* Section Header */}
+                      <button onClick={() => toggleSection(si)} style={{
+                        display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%",
+                        padding: "10px 14px", background: isOpen ? "rgba(0,0,0,0.2)" : "rgba(0,0,0,0.1)",
+                        borderRadius: isOpen ? "10px 10px 0 0" : 10,
+                        border: "none", cursor: "pointer", fontFamily: "inherit", transition: "all 0.2s"
+                      }}>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: isOpen ? "#ddd" : "#888", textAlign: "left" }}>
+                          {section.icon} {section.title}
+                          {section.duration && <span style={{ color: "#555", fontWeight: 400 }}> · {section.duration}</span>}
+                        </span>
+                        <ChevronDown size={16} color="#555" style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s", flexShrink: 0 }} />
+                      </button>
+
+                      {/* Section Content */}
+                      {isOpen && (
+                        <div style={{ background: "rgba(0,0,0,0.12)", borderRadius: "0 0 10px 10px", padding: "4px 0 8px" }}>
+                          {section.note && (
+                            <p style={{ fontSize: 11, color: A.p, fontWeight: 600, margin: "6px 14px 4px", textTransform: "uppercase", letterSpacing: "0.5px" }}>{section.note}</p>
+                          )}
+                          {section.exercises.map((ex, ei) => (
+                            <div key={ei} style={{
+                              display: "flex", alignItems: "center", gap: 10,
+                              padding: "9px 14px",
+                              borderBottom: ei < section.exercises.length - 1 ? "1px solid rgba(255,255,255,0.03)" : "none"
+                            }}>
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <div style={{ fontSize: 13, fontWeight: 600, color: "#ccc" }}>
+                                  {ex.name}
+                                  {ex.note && <span style={{ fontSize: 11, color: "#555", fontWeight: 400 }}> ({ex.note})</span>}
+                                </div>
+                                <div style={{ fontSize: 12, color: "#666", marginTop: 1 }}>
+                                  {ex.sets ? `${ex.sets} × ${ex.reps}` : ex.reps}
+                                </div>
+                              </div>
+                              {ex.video && (
+                                <a href={ex.video} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} style={{
+                                  display: "flex", alignItems: "center", gap: 4, padding: "5px 10px",
+                                  background: `${A.p}12`, borderRadius: 8, border: `1px solid ${A.p}20`,
+                                  fontSize: 11, fontWeight: 600, color: A.p, textDecoration: "none",
+                                  whiteSpace: "nowrap", flexShrink: 0
+                                }}>
+                                  <Play size={10} fill={A.p} /> Form
+                                </a>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : todayPlan ? (
+              /* ─── SIMPLE PLAN VIEW (original) ──────────────────── */
               <div style={styles.cardG}>
                 <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
                   <div style={{ width: 42, height: 42, borderRadius: 12, background: `${TC[todayPlan.type]}12`, display: "flex", alignItems: "center", justifyContent: "center" }}><TIcon type={todayPlan.type} sz={20} /></div>
@@ -243,6 +341,54 @@ export default function Today(props) {
               <div style={styles.card}><p style={{ fontSize: 15, fontWeight: 600, color: "#10b981", margin: 0 }}>Rest Day 🧘</p><p style={{ fontSize: 13, color: "#777", lineHeight: 1.6 }}>Recovery is progress. Stretch, hydrate, rest.</p></div>
             )}
           </div>
+
+          {/* Daily 10-Min Joint Routine (Coach Plan users) */}
+          {userData.coachPlan && (
+            <div style={{ marginTop: 16 }}>
+              <div style={styles.card}>
+                <button onClick={() => setShowJointRoutine(!showJointRoutine)} style={{
+                  display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%",
+                  background: "none", border: "none", cursor: "pointer", padding: 0, fontFamily: "inherit"
+                }}>
+                  <div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "#ddd", textAlign: "left" }}>🦴 Daily Joint Routine</div>
+                    <div style={{ fontSize: 11, color: "#555", marginTop: 2, textAlign: "left" }}>10 min · Every day, even rest days</div>
+                  </div>
+                  <ChevronDown size={16} color="#555" style={{ transform: showJointRoutine ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s", flexShrink: 0 }} />
+                </button>
+
+                {showJointRoutine && (
+                  <div style={{ marginTop: 12 }}>
+                    {DAILY_JOINT_ROUTINE.map((ex, i) => (
+                      <div key={i} style={{
+                        display: "flex", alignItems: "center", gap: 10,
+                        padding: "8px 0",
+                        borderBottom: i < DAILY_JOINT_ROUTINE.length - 1 ? "1px solid rgba(255,255,255,0.03)" : "none"
+                      }}>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 13, fontWeight: 600, color: "#ccc" }}>
+                            {ex.name}
+                            {ex.note && <span style={{ fontSize: 11, color: "#555", fontWeight: 400 }}> ({ex.note})</span>}
+                          </div>
+                          <div style={{ fontSize: 12, color: "#666", marginTop: 1 }}>{ex.reps}</div>
+                        </div>
+                        {ex.video && (
+                          <a href={ex.video} target="_blank" rel="noopener noreferrer" style={{
+                            display: "flex", alignItems: "center", gap: 4, padding: "5px 10px",
+                            background: `${A.p}12`, borderRadius: 8, border: `1px solid ${A.p}20`,
+                            fontSize: 11, fontWeight: 600, color: A.p, textDecoration: "none",
+                            whiteSpace: "nowrap", flexShrink: 0
+                          }}>
+                            <Play size={10} fill={A.p} /> Form
+                          </a>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Checklist */}
           <div style={{ marginTop: 20 }}>

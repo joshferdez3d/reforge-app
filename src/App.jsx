@@ -11,7 +11,7 @@ import Grow from "./tabs/Grow";
 // ─── HARDCODED USER PROFILES ────────────────────────────────────────────────
 const createNishantProfile = (existingData) => ({
   name: "Nishant", gender: "male", dietPref: "non-veg", themeColor: "orange",
-  enableCycleTracking: false, arsenalTracking: true,
+  enableCycleTracking: false, arsenalTracking: true, coachPlan: true,
   plan: {
     exerciseTemplate: "aggressive",
     cravingTriggers: NISHANT_CRAVING_TRIGGERS,
